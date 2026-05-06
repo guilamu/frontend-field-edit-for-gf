@@ -1,0 +1,461 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/guilamu/frontend-field-edit-for-gf/issues\n"
+"POT-Creation-Date: 2026-05-06 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Domain: frontend-field-edit-for-gf\n"
+
+msgid "12 hour"
+msgstr ""
+
+msgid "24 hour"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Add choice"
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+msgid "Address field custom sub-labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Address Fields"
+msgstr ""
+
+msgid "Address fields could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Admin Field Label"
+msgstr ""
+
+msgid "Admin labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Allowed editable settings"
+msgstr ""
+
+msgid "Allowed form items"
+msgstr ""
+
+msgid "Audit Logging"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Changes saved."
+msgstr ""
+
+msgid "Checkboxes"
+msgstr ""
+
+msgid "Choice labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Choice values must be 500 characters or fewer."
+msgstr ""
+
+msgid "Choices"
+msgstr ""
+
+msgid "Choices could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Choose whether this field can be edited from the frontend. Inherit uses the form-level setting."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Confirm Email"
+msgstr ""
+
+msgid "Consent"
+msgstr ""
+
+msgid "Consent Checkbox Label"
+msgstr ""
+
+msgid "Consent checkbox labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Control the global availability and baseline behavior of frontend field editing."
+msgstr ""
+
+msgid "CTRL+S/↵ to save"
+msgstr ""
+
+msgid "Custom Sub-Label"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Date defaults must use the YYYY-MM-DD format or be empty."
+msgstr ""
+
+msgid "Default for newly added supported fields on this form"
+msgstr ""
+
+msgid "Default Value"
+msgstr ""
+
+msgid "Delete choice"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Descriptions must be 2000 characters or fewer."
+msgstr ""
+
+msgid "Disable"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Disabled is the safer default for live sites; individual forms can opt in later."
+msgstr ""
+
+msgid "Drop Down"
+msgstr ""
+
+msgid "Duplicate Address field inputs were submitted."
+msgstr ""
+
+msgid "Duplicate Name field inputs were submitted."
+msgstr ""
+
+msgid "Duplicate Time field inputs were submitted."
+msgstr ""
+
+msgid "Dynamic default values and merge tags are out of scope for v1."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Edit Field"
+msgstr ""
+
+msgid "Editable Form Content"
+msgstr ""
+
+msgid "Editable Settings"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Email confirmation must be toggled on or off."
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Enable audit log"
+msgstr ""
+
+msgid "Enable Email Confirmation"
+msgstr ""
+
+msgid "Enable Frontend Field Edit"
+msgstr ""
+
+msgid "Enable frontend field editing on this form"
+msgstr ""
+
+msgid "Enable on new forms by default"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Enter Email"
+msgstr ""
+
+msgid "Field"
+msgstr ""
+
+msgid "Fields must include at least one choice."
+msgstr ""
+
+msgid "Form Description"
+msgstr ""
+
+msgid "Form Title"
+msgstr ""
+
+msgid "Frontend Editable Settings"
+msgstr ""
+
+msgid "Frontend editing is not enabled for this form."
+msgstr ""
+
+msgid "Frontend Field Edit"
+msgstr ""
+
+msgid "Frontend Field Edit for Gravity Forms"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Grant dedicated capability to roles"
+msgstr ""
+
+msgid "Inactive"
+msgstr ""
+
+msgid "Inherit"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Missing field information for this edit request."
+msgstr ""
+
+msgid "Missing form or setting information."
+msgstr ""
+
+msgid "More information about Frontend Field Edit for Gravity Forms"
+msgstr ""
+
+msgid "Multiple Choice"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Name field custom sub-labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Name Fields"
+msgstr ""
+
+msgid "Name fields could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Next field (CTRL+→)"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Number fields require a numeric default value."
+msgstr ""
+
+msgid "One of the Address field inputs was not recognized."
+msgstr ""
+
+msgid "One of the Name field inputs was not recognized."
+msgstr ""
+
+msgid "One of the Time field inputs was not recognized."
+msgstr ""
+
+msgid "Only supported options for this field type are shown here. Global plugin settings can still restrict what appears on the frontend."
+msgstr ""
+
+msgid "Paragraph Text"
+msgstr ""
+
+msgid "Permissions"
+msgstr ""
+
+msgid "Phone"
+msgstr ""
+
+msgid "Placeholder"
+msgstr ""
+
+msgid "Placeholders must be 200 characters or fewer."
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Previous field (CTRL+←)"
+msgstr ""
+
+msgid "Radio Buttons"
+msgstr ""
+
+msgid "Report a Bug"
+msgstr ""
+
+msgid "Report a Bug (install Bug Reporter)"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+msgid "Required capability"
+msgstr ""
+
+msgid "Required must be toggled on or off."
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Selected by default"
+msgstr ""
+
+msgid "Show"
+msgstr ""
+
+msgid "Single Line Text"
+msgstr ""
+
+msgid "Sub-Labels"
+msgstr ""
+
+msgid "Successful changes are stored in a dedicated audit table. Permission denials and validation failures should also be logged through Gravity Forms logging."
+msgstr ""
+
+msgid "Supported Field Types"
+msgstr ""
+
+msgid "That setting is not enabled for this field."
+msgstr ""
+
+msgid "That setting is not enabled for this form."
+msgstr ""
+
+msgid "That setting is not supported."
+msgstr ""
+
+msgid "The form changed since you opened the editor."
+msgstr ""
+
+msgid "The form update failed."
+msgstr ""
+
+msgid "The frontend save controller checks this capability on every request. Keep the dedicated capability unless you have a specific integration requirement."
+msgstr ""
+
+msgid "The requested field could not be found."
+msgstr ""
+
+msgid "The requested form could not be loaded."
+msgstr ""
+
+msgid "These global switches are intersected with each field's own toggles and field-type support rules."
+msgstr ""
+
+msgid "These global switches are intersected with each form's own toggles. Pills only appear when the title or description is actually rendered."
+msgstr ""
+
+msgid "These per-form toggles are intersected with the global form-content settings. The title or description must also exist in the rendered form heading."
+msgstr ""
+
+msgid "These role assignments apply only when the required capability is gf_frontend_field_edit."
+msgstr ""
+
+msgid "This field can only have one selected choice."
+msgstr ""
+
+msgid "This field type does not expose any frontend-editable settings in v1."
+msgstr ""
+
+msgid "This field type does not support Address field input editing."
+msgstr ""
+
+msgid "This field type does not support choice editing."
+msgstr ""
+
+msgid "This field type does not support consent checkbox label editing."
+msgstr ""
+
+msgid "This field type does not support default value editing in v1."
+msgstr ""
+
+msgid "This field type does not support email confirmation editing."
+msgstr ""
+
+msgid "This field type does not support Name field input editing."
+msgstr ""
+
+msgid "This field type does not support placeholder editing."
+msgstr ""
+
+msgid "This field type does not support required editing."
+msgstr ""
+
+msgid "This field type does not support Time field sub-label editing."
+msgstr ""
+
+msgid "This field type does not support time format editing."
+msgstr ""
+
+msgid "This form changed since the panel was opened. Refresh the page and try again."
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Time field custom sub-labels must be 500 characters or fewer."
+msgstr ""
+
+msgid "Time field sub-labels could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Time Format"
+msgstr ""
+
+msgid "Time format must be either 12 hour or 24 hour."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Titles must be 500 characters or fewer."
+msgstr ""
+
+msgid "Too many frontend field edits were attempted. Please wait a minute and try again."
+msgstr ""
+
+msgid "Unable to save the requested change."
+msgstr ""
+
+msgid "Unsupported field types remain unavailable even if a browser tries to post changes for them."
+msgstr ""
+
+msgid "View details"
+msgstr ""
+
+msgid "Website"
+msgstr ""
+
+msgid "You do not have permission to edit this form from the frontend."
+msgstr ""
+
+msgid "You must be logged in to edit form fields."
+msgstr ""
+
+msgid "Your edit session expired. Refresh the page and try again."
+msgstr ""

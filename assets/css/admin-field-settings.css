@@ -1,0 +1,35 @@
+.ffe_mode_setting select {
+	max-width: 20rem;
+	width: 100%;
+}
+
+.ffe_editable_settings_setting fieldset {
+	margin: 0;
+	padding: 0;
+}
+
+.ffe-setting-options {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 8px;
+}
+
+.ffe-setting-option {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+	line-height: 1.4;
+}
+
+.ffe-setting-option input {
+	margin: 0;
+}
+
+.ffe_editable_settings_setting .gf_settings_description {
+	display: block;
+	color: #5b5e80;
+	font-size: 12px;
+	line-height: 1.5;
+	margin: 12px 0 0;
+}

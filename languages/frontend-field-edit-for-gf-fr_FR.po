@@ -1,0 +1,462 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/guilamu/frontend-field-edit-for-gf/issues\n"
+"POT-Creation-Date: 2026-05-06 00:00+0000\n"
+"PO-Revision-Date: 2026-05-06 20:40+0200\n"
+"Last-Translator: GitHub Copilot <copilot@github.com>\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Domain: frontend-field-edit-for-gf\n"
+"X-Generator: Poedit 3.9\n"
+
+msgid "12 hour"
+msgstr "12 heures"
+
+msgid "24 hour"
+msgstr "24 heures"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Add choice"
+msgstr "Ajouter un choix"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Address field custom sub-labels must be 500 characters or fewer."
+msgstr "Les sous-libellés personnalisés des champs d'adresse doivent contenir 500 caractères ou moins."
+
+msgid "Address Fields"
+msgstr "Champs d'adresse"
+
+msgid "Address fields could not be saved because the request payload was invalid."
+msgstr "Les champs d'adresse n'ont pas pu être enregistrés car la charge utile de la requête était invalide."
+
+msgid "Admin Field Label"
+msgstr "Libellé du champ d'administration"
+
+msgid "Admin labels must be 500 characters or fewer."
+msgstr "Les libellés d'administration doivent contenir 500 caractères ou moins."
+
+msgid "Allowed editable settings"
+msgstr "Réglages modifiables autorisés"
+
+msgid "Allowed form items"
+msgstr "Éléments de formulaire autorisés"
+
+msgid "Audit Logging"
+msgstr "Journal d'audit"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Changes saved."
+msgstr "Modifications enregistrées."
+
+msgid "Checkboxes"
+msgstr "Cases à cocher"
+
+msgid "Choice labels must be 500 characters or fewer."
+msgstr "Les libellés des choix doivent contenir 500 caractères ou moins."
+
+msgid "Choice values must be 500 characters or fewer."
+msgstr "Les valeurs des choix doivent contenir 500 caractères ou moins."
+
+msgid "Choices"
+msgstr "Choix"
+
+msgid "Choices could not be saved because the request payload was invalid."
+msgstr "Les choix n'ont pas pu être enregistrés car la charge utile de la requête était invalide."
+
+msgid "Choose whether this field can be edited from the frontend. Inherit uses the form-level setting."
+msgstr "Choisissez si ce champ peut être modifié depuis le frontal. Hériter utilise le réglage du formulaire."
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Confirm Email"
+msgstr "Confirmer l'e-mail"
+
+msgid "Consent"
+msgstr "Consentement"
+
+msgid "Consent Checkbox Label"
+msgstr "Libellé de la case à cocher de consentement"
+
+msgid "Consent checkbox labels must be 500 characters or fewer."
+msgstr "Les libellés des cases à cocher de consentement doivent contenir 500 caractères ou moins."
+
+msgid "Control the global availability and baseline behavior of frontend field editing."
+msgstr "Contrôlez la disponibilité globale et le comportement de base de l'édition de champs en frontal."
+
+msgid "CTRL+S/↵ to save"
+msgstr "CTRL+S/↵ pour enregistrer"
+
+msgid "Custom Sub-Label"
+msgstr "Sous-libellé personnalisé"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Date defaults must use the YYYY-MM-DD format or be empty."
+msgstr "Les valeurs par défaut de date doivent utiliser le format AAAA-MM-JJ ou être vides."
+
+msgid "Default for newly added supported fields on this form"
+msgstr "Valeur par défaut pour les nouveaux champs pris en charge ajoutés à ce formulaire"
+
+msgid "Default Value"
+msgstr "Valeur par défaut"
+
+msgid "Delete choice"
+msgstr "Supprimer le choix"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Descriptions must be 2000 characters or fewer."
+msgstr "Les descriptions doivent contenir 2000 caractères ou moins."
+
+msgid "Disable"
+msgstr "Désactiver"
+
+msgid "Disabled"
+msgstr "Désactivé"
+
+msgid "Disabled is the safer default for live sites; individual forms can opt in later."
+msgstr "Désactivé est l'option la plus sûre par défaut pour les sites en production ; les formulaires individuels pourront l'activer plus tard."
+
+msgid "Drop Down"
+msgstr "Liste déroulante"
+
+msgid "Duplicate Address field inputs were submitted."
+msgstr "Des entrées de champ Adresse dupliquées ont été envoyées."
+
+msgid "Duplicate Name field inputs were submitted."
+msgstr "Des entrées de champ Nom dupliquées ont été envoyées."
+
+msgid "Duplicate Time field inputs were submitted."
+msgstr "Des entrées de champ Heure dupliquées ont été envoyées."
+
+msgid "Dynamic default values and merge tags are out of scope for v1."
+msgstr "Les valeurs par défaut dynamiques et les balises de fusion sont hors périmètre pour la v1."
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Edit Field"
+msgstr "Modifier le champ"
+
+msgid "Editable Form Content"
+msgstr "Contenu du formulaire modifiable"
+
+msgid "Editable Settings"
+msgstr "Réglages modifiables"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Email confirmation must be toggled on or off."
+msgstr "La confirmation de l'e-mail doit être activée ou désactivée."
+
+msgid "Enable"
+msgstr "Activer"
+
+msgid "Enable audit log"
+msgstr "Activer le journal d'audit"
+
+msgid "Enable Email Confirmation"
+msgstr "Activer la confirmation de l'e-mail"
+
+msgid "Enable Frontend Field Edit"
+msgstr "Activer l'édition de champ en frontal"
+
+msgid "Enable frontend field editing on this form"
+msgstr "Activer l'édition de champs en frontal sur ce formulaire"
+
+msgid "Enable on new forms by default"
+msgstr "Activer par défaut sur les nouveaux formulaires"
+
+msgid "Enabled"
+msgstr "Activé"
+
+msgid "Enter Email"
+msgstr "Saisir l'e-mail"
+
+msgid "Field"
+msgstr "Champ"
+
+msgid "Fields must include at least one choice."
+msgstr "Les champs doivent inclure au moins un choix."
+
+msgid "Form Description"
+msgstr "Description du formulaire"
+
+msgid "Form Title"
+msgstr "Titre du formulaire"
+
+msgid "Frontend Editable Settings"
+msgstr "Réglages modifiables en frontal"
+
+msgid "Frontend editing is not enabled for this form."
+msgstr "L'édition en frontal n'est pas activée pour ce formulaire."
+
+msgid "Frontend Field Edit"
+msgstr "Édition de champ en frontal"
+
+msgid "Frontend Field Edit for Gravity Forms"
+msgstr "Frontend Field Edit for Gravity Forms"
+
+msgid "General"
+msgstr "Général"
+
+msgid "Grant dedicated capability to roles"
+msgstr "Accorder la capacité dédiée aux rôles"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "Inherit"
+msgstr "Hériter"
+
+msgid "Label"
+msgstr "Libellé"
+
+msgid "Labels must be 500 characters or fewer."
+msgstr "Les libellés doivent contenir 500 caractères ou moins."
+
+msgid "Missing field information for this edit request."
+msgstr "Informations de champ manquantes pour cette demande de modification."
+
+msgid "Missing form or setting information."
+msgstr "Informations de formulaire ou de réglage manquantes."
+
+msgid "More information about Frontend Field Edit for Gravity Forms"
+msgstr "Plus d'informations sur Frontend Field Edit for Gravity Forms"
+
+msgid "Multiple Choice"
+msgstr "Choix multiple"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Name field custom sub-labels must be 500 characters or fewer."
+msgstr "Les sous-libellés personnalisés des champs Nom doivent contenir 500 caractères ou moins."
+
+msgid "Name Fields"
+msgstr "Champs Nom"
+
+msgid "Name fields could not be saved because the request payload was invalid."
+msgstr "Les champs Nom n'ont pas pu être enregistrés car la charge utile de la requête était invalide."
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "Next field (CTRL+→)"
+msgstr "Champ suivant (CTRL+→)"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Number fields require a numeric default value."
+msgstr "Les champs Nombre nécessitent une valeur par défaut numérique."
+
+msgid "One of the Address field inputs was not recognized."
+msgstr "L'une des entrées du champ Adresse n'a pas été reconnue."
+
+msgid "One of the Name field inputs was not recognized."
+msgstr "L'une des entrées du champ Nom n'a pas été reconnue."
+
+msgid "One of the Time field inputs was not recognized."
+msgstr "L'une des entrées du champ Heure n'a pas été reconnue."
+
+msgid "Only supported options for this field type are shown here. Global plugin settings can still restrict what appears on the frontend."
+msgstr "Seules les options prises en charge pour ce type de champ sont affichées ici. Les réglages globaux de l'extension peuvent encore restreindre ce qui apparaît en frontal."
+
+msgid "Paragraph Text"
+msgstr "Texte de paragraphe"
+
+msgid "Permissions"
+msgstr "Autorisations"
+
+msgid "Phone"
+msgstr "Téléphone"
+
+msgid "Placeholder"
+msgstr "Texte indicatif"
+
+msgid "Placeholders must be 200 characters or fewer."
+msgstr "Les textes indicatifs doivent contenir 200 caractères ou moins."
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Previous field (CTRL+←)"
+msgstr "Champ précédent (CTRL+←)"
+
+msgid "Radio Buttons"
+msgstr "Boutons radio"
+
+msgid "Report a Bug"
+msgstr "Signaler un bug"
+
+msgid "Report a Bug (install Bug Reporter)"
+msgstr "Signaler un bug (installer Bug Reporter)"
+
+msgid "Required"
+msgstr "Obligatoire"
+
+msgid "Required capability"
+msgstr "Capacité requise"
+
+msgid "Required must be toggled on or off."
+msgstr "L'option Obligatoire doit être activée ou désactivée."
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Saving..."
+msgstr "Enregistrement..."
+
+msgid "Selected by default"
+msgstr "Sélectionné par défaut"
+
+msgid "Show"
+msgstr "Afficher"
+
+msgid "Single Line Text"
+msgstr "Texte sur une ligne"
+
+msgid "Sub-Labels"
+msgstr "Sous-libellés"
+
+msgid "Successful changes are stored in a dedicated audit table. Permission denials and validation failures should also be logged through Gravity Forms logging."
+msgstr "Les modifications réussies sont enregistrées dans une table d'audit dédiée. Les refus d'autorisation et les échecs de validation doivent également être consignés dans les journaux de Gravity Forms."
+
+msgid "Supported Field Types"
+msgstr "Types de champs pris en charge"
+
+msgid "That setting is not enabled for this field."
+msgstr "Ce réglage n'est pas activé pour ce champ."
+
+msgid "That setting is not enabled for this form."
+msgstr "Ce réglage n'est pas activé pour ce formulaire."
+
+msgid "That setting is not supported."
+msgstr "Ce réglage n'est pas pris en charge."
+
+msgid "The form changed since you opened the editor."
+msgstr "Le formulaire a changé depuis que vous avez ouvert l'éditeur."
+
+msgid "The form update failed."
+msgstr "La mise à jour du formulaire a échoué."
+
+msgid "The frontend save controller checks this capability on every request. Keep the dedicated capability unless you have a specific integration requirement."
+msgstr "Le contrôleur d'enregistrement frontal vérifie cette capacité à chaque requête. Conservez la capacité dédiée sauf si vous avez une exigence d'intégration spécifique."
+
+msgid "The requested field could not be found."
+msgstr "Le champ demandé est introuvable."
+
+msgid "The requested form could not be loaded."
+msgstr "Le formulaire demandé n'a pas pu être chargé."
+
+msgid "These global switches are intersected with each field's own toggles and field-type support rules."
+msgstr "Ces options globales sont croisées avec les propres bascules de chaque champ et les règles de prise en charge par type de champ."
+
+msgid "These global switches are intersected with each form's own toggles. Pills only appear when the title or description is actually rendered."
+msgstr "Ces options globales sont croisées avec les propres bascules de chaque formulaire. Les pastilles n'apparaissent que lorsque le titre ou la description sont réellement affichés."
+
+msgid "These per-form toggles are intersected with the global form-content settings. The title or description must also exist in the rendered form heading."
+msgstr "Ces bascules par formulaire sont croisées avec les réglages globaux de contenu du formulaire. Le titre ou la description doivent également exister dans l'en-tête rendu du formulaire."
+
+msgid "These role assignments apply only when the required capability is gf_frontend_field_edit."
+msgstr "Ces attributions de rôles s'appliquent uniquement lorsque la capacité requise est gf_frontend_field_edit."
+
+msgid "This field can only have one selected choice."
+msgstr "Ce champ ne peut avoir qu'un seul choix sélectionné."
+
+msgid "This field type does not expose any frontend-editable settings in v1."
+msgstr "Ce type de champ n'expose aucun réglage modifiable en frontal dans la v1."
+
+msgid "This field type does not support Address field input editing."
+msgstr "Ce type de champ ne prend pas en charge la modification des entrées du champ Adresse."
+
+msgid "This field type does not support choice editing."
+msgstr "Ce type de champ ne prend pas en charge la modification des choix."
+
+msgid "This field type does not support consent checkbox label editing."
+msgstr "Ce type de champ ne prend pas en charge la modification du libellé de la case à cocher de consentement."
+
+msgid "This field type does not support default value editing in v1."
+msgstr "Ce type de champ ne prend pas en charge la modification de la valeur par défaut dans la v1."
+
+msgid "This field type does not support email confirmation editing."
+msgstr "Ce type de champ ne prend pas en charge la modification de la confirmation de l'e-mail."
+
+msgid "This field type does not support Name field input editing."
+msgstr "Ce type de champ ne prend pas en charge la modification des entrées du champ Nom."
+
+msgid "This field type does not support placeholder editing."
+msgstr "Ce type de champ ne prend pas en charge la modification du texte indicatif."
+
+msgid "This field type does not support required editing."
+msgstr "Ce type de champ ne prend pas en charge la modification de l'option Obligatoire."
+
+msgid "This field type does not support Time field sub-label editing."
+msgstr "Ce type de champ ne prend pas en charge la modification des sous-libellés du champ Heure."
+
+msgid "This field type does not support time format editing."
+msgstr "Ce type de champ ne prend pas en charge la modification du format d'heure."
+
+msgid "This form changed since the panel was opened. Refresh the page and try again."
+msgstr "Ce formulaire a changé depuis l'ouverture du panneau. Actualisez la page et réessayez."
+
+msgid "Time"
+msgstr "Heure"
+
+msgid "Time field custom sub-labels must be 500 characters or fewer."
+msgstr "Les sous-libellés personnalisés du champ Heure doivent contenir 500 caractères ou moins."
+
+msgid "Time field sub-labels could not be saved because the request payload was invalid."
+msgstr "Les sous-libellés du champ Heure n'ont pas pu être enregistrés car la charge utile de la requête était invalide."
+
+msgid "Time Format"
+msgstr "Format d'heure"
+
+msgid "Time format must be either 12 hour or 24 hour."
+msgstr "Le format d'heure doit être soit 12 heures soit 24 heures."
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Titles must be 500 characters or fewer."
+msgstr "Les titres doivent contenir 500 caractères ou moins."
+
+msgid "Too many frontend field edits were attempted. Please wait a minute and try again."
+msgstr "Trop de modifications de champs en frontal ont été tentées. Veuillez patienter une minute puis réessayer."
+
+msgid "Unable to save the requested change."
+msgstr "Impossible d'enregistrer la modification demandée."
+
+msgid "Unsupported field types remain unavailable even if a browser tries to post changes for them."
+msgstr "Les types de champs non pris en charge restent indisponibles même si un navigateur tente d'envoyer des modifications pour eux."
+
+msgid "View details"
+msgstr "Voir les détails"
+
+msgid "Website"
+msgstr "Site web"
+
+msgid "You do not have permission to edit this form from the frontend."
+msgstr "Vous n'avez pas l'autorisation de modifier ce formulaire depuis le frontal."
+
+msgid "You must be logged in to edit form fields."
+msgstr "Vous devez être connecté pour modifier les champs du formulaire."
+
+msgid "Your edit session expired. Refresh the page and try again."
+msgstr "Votre session de modification a expiré. Actualisez la page et réessayez."
