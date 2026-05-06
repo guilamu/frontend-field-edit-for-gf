@@ -19,7 +19,7 @@ class FFE_AddOn extends GFAddOn {
 	protected $_version = FFE_GF_VERSION;
 	protected $_min_gravityforms_version = '2.5';
 	protected $_slug = 'frontend-field-edit-for-gf';
-	protected $_path = 'frontend-field-edit-for-gravity-forms/frontend-field-edit-for-gravity-forms.php';
+	protected $_path = '';
 	protected $_full_path = FFE_GF_PLUGIN_FILE;
 	protected $_title = 'Frontend Field Edit for Gravity Forms';
 	protected $_short_title = 'Frontend Field Edit';
@@ -29,6 +29,11 @@ class FFE_AddOn extends GFAddOn {
 	protected $_capabilities_uninstall = array( 'gravityforms_uninstall' );
 
 	private static $_instance = null;
+
+	public function __construct() {
+		$this->_path = plugin_basename( FFE_GF_PLUGIN_FILE );
+		parent::__construct();
+	}
 
 	public static function get_instance() {
 		if ( null === self::$_instance ) {
@@ -115,8 +120,6 @@ class FFE_AddOn extends GFAddOn {
 						'customSubLabelLabel' => esc_html__( 'Custom Sub-Label', 'frontend-field-edit-for-gf' ),
 						'enterEmailLabel' => esc_html__( 'Enter Email', 'frontend-field-edit-for-gf' ),
 						'confirmEmailLabel' => esc_html__( 'Confirm Email', 'frontend-field-edit-for-gf' ),
-						'timeFormat12Label' => esc_html__( '12 hour', 'frontend-field-edit-for-gf' ),
-						'timeFormat24Label' => esc_html__( '24 hour', 'frontend-field-edit-for-gf' ),
 						'errorLabel'    => esc_html__( 'Unable to save the requested change.', 'frontend-field-edit-for-gf' ),
 						'successLabel'  => esc_html__( 'Changes saved.', 'frontend-field-edit-for-gf' ),
 						'conflictLabel' => esc_html__( 'This form changed since the panel was opened. Refresh the page and try again.', 'frontend-field-edit-for-gf' ),

@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class FFE_GF_GitHub_Updater {
 	private const GITHUB_USER = 'guilamu';
 	private const GITHUB_REPO = 'frontend-field-edit-for-gf';
-	private const PLUGIN_FILE = 'frontend-field-edit-for-gravity-forms/frontend-field-edit-for-gravity-forms.php';
-	private const PLUGIN_SLUG = 'frontend-field-edit-for-gravity-forms';
+	private const PLUGIN_MAIN_FILE = 'frontend-field-edit-for-gravity-forms.php';
+	private const PLUGIN_SLUG = 'frontend-field-edit-for-gf';
 	private const PLUGIN_NAME = 'Frontend Field Edit for Gravity Forms';
 	private const PLUGIN_DESCRIPTION = 'Lets trusted users edit safe Gravity Forms field settings from the frontend.';
 	private const REQUIRES_WP = '5.8';
@@ -22,6 +22,14 @@ class FFE_GF_GitHub_Updater {
 		add_filter( 'plugins_api', array( __CLASS__, 'plugin_info' ), 20, 3 );
 		add_filter( 'upgrader_source_selection', array( __CLASS__, 'fix_folder_name' ), 10, 4 );
 		add_action( 'admin_head', array( __CLASS__, 'plugin_info_css' ) );
+	}
+
+	private static function get_plugin_file() {
+		return plugin_basename( dirname( __DIR__ ) . '/' . self::PLUGIN_MAIN_FILE );
+	}
+
+	private static function get_plugin_slug() {
+		return self::PLUGIN_SLUG;
 	}
 
 	private static function get_github_token() {
@@ -49,7 +57,7 @@ class FFE_GF_GitHub_Updater {
 		$response = wp_remote_get(
 			sprintf( 'https://api.github.com/repos/%s/%s/releases/latest', self::GITHUB_USER, self::GITHUB_REPO ),
 			array(
-				'user-agent' => 'WordPress/' . self::PLUGIN_SLUG,
+				'user-agent' => 'WordPress/' . self::get_plugin_slug(),
 				'timeout'    => 15,
 				'headers'    => $headers,
 			)
@@ -107,7 +115,7 @@ class FFE_GF_GitHub_Updater {
 	public static function check_for_update( $update, $plugin_data, $plugin_file, $locales ) {
 		unset( $locales );
 
-		if ( self::PLUGIN_FILE !== $plugin_file ) {
+		if ( self::get_plugin_file() !== $plugin_file ) {
 			return $update;
 		}
 
@@ -126,8 +134,8 @@ class FFE_GF_GitHub_Updater {
 
 		return array(
 			'id'            => 'github.com/' . self::GITHUB_USER . '/' . self::GITHUB_REPO,
-			'slug'          => self::PLUGIN_SLUG,
-			'plugin'        => self::PLUGIN_FILE,
+			'slug'          => self::get_plugin_slug(),
+			'plugin'        => self::get_plugin_file(),
 			'new_version'   => $new_version,
 			'version'       => $new_version,
 			'package'       => self::get_package_url( $release_data ),
@@ -146,11 +154,11 @@ class FFE_GF_GitHub_Updater {
 			return $res;
 		}
 
-		if ( ! isset( $args->slug ) || self::PLUGIN_SLUG !== $args->slug ) {
+		if ( ! isset( $args->slug ) || self::get_plugin_slug() !== $args->slug ) {
 			return $res;
 		}
 
-		$plugin_file = WP_PLUGIN_DIR . '/' . self::PLUGIN_FILE;
+		$plugin_file = WP_PLUGIN_DIR . '/' . self::get_plugin_file();
 		$plugin_data = get_plugin_data( $plugin_file, false, false );
 		$release_data = self::get_release_data();
 		$installed_version = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '0.0.0';
@@ -163,8 +171,8 @@ class FFE_GF_GitHub_Updater {
 
 		$res = new stdClass();
 		$res->name = self::PLUGIN_NAME;
-		$res->slug = self::PLUGIN_SLUG;
-		$res->plugin = self::PLUGIN_FILE;
+		$res->slug = self::get_plugin_slug();
+		$res->plugin = self::get_plugin_file();
 		$res->version = $version;
 		$res->author = sprintf( '<a href="https://github.com/%s">%s</a>', esc_attr( self::GITHUB_USER ), esc_html( self::GITHUB_USER ) );
 		$res->homepage = sprintf( 'https://github.com/%s/%s', self::GITHUB_USER, self::GITHUB_REPO );
@@ -220,7 +228,7 @@ class FFE_GF_GitHub_Updater {
 		$tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) );
 		$plugin = sanitize_text_field( wp_unslash( $_GET['plugin'] ) );
 
-		if ( 'plugin-information' !== $tab || self::PLUGIN_SLUG !== $plugin ) {
+		if ( 'plugin-information' !== $tab || self::get_plugin_slug() !== $plugin ) {
 			return;
 		}
 
@@ -272,7 +280,7 @@ class FFE_GF_GitHub_Updater {
 	}
 
 	private static function parse_readme() {
-		$readme_path = WP_PLUGIN_DIR . '/' . dirname( self::PLUGIN_FILE ) . '/README.md';
+		$readme_path = WP_PLUGIN_DIR . '/' . dirname( self::get_plugin_file() ) . '/README.md';
 
 		if ( ! file_exists( $readme_path ) ) {
 			return array();
@@ -389,11 +397,11 @@ class FFE_GF_GitHub_Updater {
 
 		unset( $upgrader );
 
-		if ( ! isset( $hook_extra['plugin'] ) || self::PLUGIN_FILE !== $hook_extra['plugin'] ) {
+		if ( ! isset( $hook_extra['plugin'] ) || self::get_plugin_file() !== $hook_extra['plugin'] ) {
 			return $source;
 		}
 
-		$correct_folder = dirname( self::PLUGIN_FILE );
+		$correct_folder = dirname( self::get_plugin_file() );
 		$source_folder = basename( untrailingslashit( $source ) );
 
 		if ( $source_folder === $correct_folder ) {

@@ -17,10 +17,10 @@
 defined( 'ABSPATH' ) || exit;
 
 define( 'FFE_GF_VERSION', '1.0.0' );
-define( 'FFE_GF_PLUGIN_SLUG', 'frontend-field-edit-for-gravity-forms' );
+define( 'FFE_GF_PLUGIN_FILE', __FILE__ );
+define( 'FFE_GF_PLUGIN_SLUG', 'frontend-field-edit-for-gf' );
 define( 'FFE_GF_PLUGIN_NAME', 'Frontend Field Edit for Gravity Forms' );
 define( 'FFE_GF_GITHUB_REPO', 'guilamu/frontend-field-edit-for-gf' );
-define( 'FFE_GF_PLUGIN_FILE', __FILE__ );
 define( 'FFE_GF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FFE_GF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

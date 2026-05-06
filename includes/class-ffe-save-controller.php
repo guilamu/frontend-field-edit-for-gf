@@ -276,17 +276,17 @@ class FFE_Save_Controller {
 			case FFE_Config_Resolver::SETTING_EMAIL_CONFIRMATION:
 				return ! empty( $this->get_field_property( $field, 'emailConfirmEnabled' ) ) ? '1' : '0';
 
-			case FFE_Config_Resolver::SETTING_NAME_FIELDS:
-				return $this->get_name_field_inputs( $field );
+				case FFE_Config_Resolver::SETTING_NAME_FIELDS:
+					return $this->get_name_field_inputs( $field );
 
-			case FFE_Config_Resolver::SETTING_TIME_FORMAT:
-				return $this->get_time_format( $field );
+				case FFE_Config_Resolver::SETTING_TIME_FORMAT:
+					return $this->get_time_format( $field );
 
-			case FFE_Config_Resolver::SETTING_TIME_SUB_LABELS:
-				return $this->get_time_field_inputs( $field );
+				case FFE_Config_Resolver::SETTING_TIME_SUB_LABELS:
+					return $this->get_time_field_inputs( $field );
 
-			case FFE_Config_Resolver::SETTING_ADDRESS_FIELDS:
-				return $this->get_address_field_inputs( $field );
+				case FFE_Config_Resolver::SETTING_ADDRESS_FIELDS:
+					return $this->get_address_field_inputs( $field );
 
 			case FFE_Config_Resolver::SETTING_DESCRIPTION:
 				return (string) $this->get_field_property( $field, 'description' );
@@ -387,6 +387,7 @@ class FFE_Save_Controller {
 	}
 
 	private function set_field_property( &$field, $property, $value ) {
+
 		if ( is_object( $field ) ) {
 			$field->{ $property } = $value;
 			return;

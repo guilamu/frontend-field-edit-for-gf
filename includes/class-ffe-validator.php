@@ -31,8 +31,8 @@ class FFE_Validator {
 			case FFE_Config_Resolver::SETTING_LABEL:
 				return self::validate_length( $value, 500, 'ffe_invalid_label_length', __( 'Labels must be 500 characters or fewer.', 'frontend-field-edit-for-gf' ) );
 
-			case FFE_Config_Resolver::SETTING_CONSENT_CHECKBOX_LABEL:
-				if ( ! in_array( FFE_Config_Resolver::SETTING_CONSENT_CHECKBOX_LABEL, FFE_Config_Resolver::get_available_settings_for_field_type( $field_type ), true ) ) {
+			case 'consent_checkbox_label':
+				if ( ! in_array( 'consent_checkbox_label', FFE_Config_Resolver::get_available_settings_for_field_type( $field_type ), true ) ) {
 					return new WP_Error( 'ffe_invalid_consent_checkbox_label_field_type', __( 'This field type does not support consent checkbox label editing.', 'frontend-field-edit-for-gf' ) );
 				}
 

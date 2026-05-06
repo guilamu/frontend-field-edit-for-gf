@@ -23,14 +23,14 @@ jobs:
 
       - name: Create plugin zip
         run: |
-          PLUGIN_DIR="frontend-field-edit-for-gravity-forms"
-          SOURCE_DIR="./${PLUGIN_DIR}"
+          PACKAGE_DIR="frontend-field-edit-for-gf"
+          SOURCE_DIR="./frontend-field-edit-for-gravity-forms"
 
           if [ ! -d "${SOURCE_DIR}" ]; then
             SOURCE_DIR="."
           fi
 
-          mkdir -p "build/${PLUGIN_DIR}"
+          mkdir -p "build/${PACKAGE_DIR}"
 
           rsync -av --exclude='.git' \
                     --exclude='.github' \
@@ -43,12 +43,12 @@ jobs:
                     --exclude='.DS_Store' \
                     --exclude='screenshot*.*' \
                     --exclude='frontend-field-edit-for-gf.zip' \
-                    "${SOURCE_DIR}/" "build/${PLUGIN_DIR}/"
+                    "${SOURCE_DIR}/" "build/${PACKAGE_DIR}/"
 
-          cp "${SOURCE_DIR}/README.md" "build/${PLUGIN_DIR}/" 2>/dev/null || true
+          cp "${SOURCE_DIR}/README.md" "build/${PACKAGE_DIR}/" 2>/dev/null || true
 
           cd build
-          zip -r ../frontend-field-edit-for-gf.zip frontend-field-edit-for-gravity-forms
+          zip -r ../frontend-field-edit-for-gf.zip "${PACKAGE_DIR}"
           cd ..
 
       - name: Create GitHub Release

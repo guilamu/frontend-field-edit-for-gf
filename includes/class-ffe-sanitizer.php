@@ -28,8 +28,8 @@ class FFE_Sanitizer {
 			case FFE_Config_Resolver::SETTING_CONSENT_CHECKBOX_LABEL:
 				return self::sanitize_label( $value );
 
-			case FFE_Config_Resolver::SETTING_TIME_FORMAT:
-				return self::sanitize_time_format( $value );
+				case FFE_Config_Resolver::SETTING_TIME_FORMAT:
+					return self::sanitize_time_format( $value );
 
 			case FFE_Config_Resolver::SETTING_REQUIRED:
 			case FFE_Config_Resolver::SETTING_EMAIL_CONFIRMATION:

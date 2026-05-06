@@ -3375,10 +3375,10 @@
 				patchAddressFieldDom( formId, fieldId, value, config, field );
 				break;
 
-			case 'time_format':
-			case 'time_sub_labels':
-				patchTimeFieldDom( formId, fieldId, value, config, field );
-				break;
+				case 'time_format':
+				case 'time_sub_labels':
+					patchTimeFieldDom( formId, fieldId, value, config, field );
+					break;
 
 			case 'choices':
 				patchChoicesFieldDom( formId, fieldId, value, config, field );
