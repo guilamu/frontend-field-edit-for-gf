@@ -42,19 +42,19 @@ jobs:
                     --exclude='node_modules' \
                     --exclude='.DS_Store' \
                     --exclude='screenshot*.*' \
-                    --exclude='frontend-field-edit-for-gravity-forms.zip' \
+                    --exclude='frontend-field-edit-for-gf.zip' \
                     "${SOURCE_DIR}/" "build/${PLUGIN_DIR}/"
 
           cp "${SOURCE_DIR}/README.md" "build/${PLUGIN_DIR}/" 2>/dev/null || true
 
           cd build
-          zip -r ../frontend-field-edit-for-gravity-forms.zip frontend-field-edit-for-gravity-forms
+          zip -r ../frontend-field-edit-for-gf.zip frontend-field-edit-for-gravity-forms
           cd ..
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: frontend-field-edit-for-gravity-forms.zip
+          files: frontend-field-edit-for-gf.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
