@@ -23,18 +23,29 @@ jobs:
 
       - name: Create plugin zip
         run: |
-          mkdir -p build/frontend-field-edit-for-gravity-forms
+          PLUGIN_DIR="frontend-field-edit-for-gravity-forms"
+          SOURCE_DIR="./${PLUGIN_DIR}"
+
+          if [ ! -d "${SOURCE_DIR}" ]; then
+            SOURCE_DIR="."
+          fi
+
+          mkdir -p "build/${PLUGIN_DIR}"
 
           rsync -av --exclude='.git' \
                     --exclude='.github' \
                     --exclude='build' \
                     --exclude='.gitignore' \
+                    --exclude='*.md' \
                     --exclude='composer.*' \
                     --exclude='package*.json' \
                     --exclude='node_modules' \
                     --exclude='.DS_Store' \
                     --exclude='screenshot*.*' \
-                    ./frontend-field-edit-for-gravity-forms/ build/frontend-field-edit-for-gravity-forms/
+                    --exclude='frontend-field-edit-for-gravity-forms.zip' \
+                    "${SOURCE_DIR}/" "build/${PLUGIN_DIR}/"
+
+          cp "${SOURCE_DIR}/README.md" "build/${PLUGIN_DIR}/" 2>/dev/null || true
 
           cd build
           zip -r ../frontend-field-edit-for-gravity-forms.zip frontend-field-edit-for-gravity-forms
