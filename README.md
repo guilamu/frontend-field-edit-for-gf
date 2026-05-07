@@ -56,7 +56,7 @@ Check that Gravity Forms is active, frontend editing is enabled for that form, y
 
 ### Which settings can be edited?
 
-The plugin supports a controlled subset of field settings such as labels, descriptions, placeholders, required state, choices, consent text, address sub-fields, name sub-fields, and time field options.
+The plugin supports a controlled subset of field settings such as labels, descriptions, placeholders, default values, address default country, required state, choices, consent text, address sub-fields, name sub-fields, and time field options.
 
 ### Does it work with Gravity Forms multi-page forms?
 
@@ -110,6 +110,11 @@ When you publish releases on GitHub, WordPress can detect new versions through t
 ```
 
 ## Changelog
+
+### 1.0.1 - 2026-05-07
+
+- **Improved:** Added frontend editing for Time field per-input default values and live preview updates without a full page refresh.
+- **Improved:** Added frontend editing for Address field per-input default values and the native Gravity Forms Default Country dropdown.
 
 ### 1.0.0 - 2026-05-06
 

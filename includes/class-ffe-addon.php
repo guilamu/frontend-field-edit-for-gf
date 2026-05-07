@@ -117,6 +117,7 @@ class FFE_AddOn extends GFAddOn {
 						'inactiveText'  => esc_html__( 'Inactive', 'frontend-field-edit-for-gf' ),
 						'showLabel'     => esc_html__( 'Show', 'frontend-field-edit-for-gf' ),
 						'fieldLabel'    => esc_html__( 'Field', 'frontend-field-edit-for-gf' ),
+						'defaultValuesLabel' => esc_html__( 'Default Values', 'frontend-field-edit-for-gf' ),
 						'customSubLabelLabel' => esc_html__( 'Custom Sub-Label', 'frontend-field-edit-for-gf' ),
 						'enterEmailLabel' => esc_html__( 'Enter Email', 'frontend-field-edit-for-gf' ),
 						'confirmEmailLabel' => esc_html__( 'Confirm Email', 'frontend-field-edit-for-gf' ),

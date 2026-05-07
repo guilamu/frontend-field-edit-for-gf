@@ -295,7 +295,10 @@ class FFE_Save_Controller {
 				return (string) $this->get_field_property( $field, 'placeholder' );
 
 			case FFE_Config_Resolver::SETTING_DEFAULT_VALUE:
-				return (string) $this->get_field_property( $field, 'defaultValue' );
+				return $this->is_time_field( $field ) ? $this->get_time_field_default_values( $field ) : ( $this->is_address_field( $field ) ? $this->get_address_field_default_values( $field ) : (string) $this->get_field_property( $field, 'defaultValue' ) );
+
+			case FFE_Config_Resolver::SETTING_DEFAULT_COUNTRY:
+				return $this->is_address_field( $field ) ? (string) $this->get_field_property( $field, 'defaultCountry' ) : '';
 
 			case FFE_Config_Resolver::SETTING_ADMIN_LABEL:
 				return (string) $this->get_field_property( $field, 'adminLabel' );
@@ -360,6 +363,16 @@ class FFE_Save_Controller {
 			return;
 		}
 
+		if ( FFE_Config_Resolver::SETTING_DEFAULT_VALUE === $setting_key && $this->is_time_field( $field ) && is_array( $value ) ) {
+			$this->set_time_field_default_values( $field, $value );
+			return;
+		}
+
+		if ( FFE_Config_Resolver::SETTING_DEFAULT_VALUE === $setting_key && $this->is_address_field( $field ) && is_array( $value ) ) {
+			$this->set_address_field_default_values( $field, $value );
+			return;
+		}
+
 		if ( FFE_Config_Resolver::SETTING_ADDRESS_FIELDS === $setting_key ) {
 			$this->set_address_field_inputs( $field, $value );
 			return;
@@ -372,6 +385,7 @@ class FFE_Save_Controller {
 			FFE_Config_Resolver::SETTING_DESCRIPTION   => 'description',
 			FFE_Config_Resolver::SETTING_PLACEHOLDER   => 'placeholder',
 			FFE_Config_Resolver::SETTING_DEFAULT_VALUE => 'defaultValue',
+			FFE_Config_Resolver::SETTING_DEFAULT_COUNTRY => 'defaultCountry',
 			FFE_Config_Resolver::SETTING_ADMIN_LABEL   => 'adminLabel',
 		);
 
@@ -423,7 +437,8 @@ class FFE_Save_Controller {
 				'address_fields'     => $this->get_address_field_inputs( $field ),
 				'description'        => (string) $this->get_field_property( $field, 'description' ),
 				'placeholder'        => (string) $this->get_field_property( $field, 'placeholder' ),
-				'default_value'      => (string) $this->get_field_property( $field, 'defaultValue' ),
+				'default_value'      => $this->is_time_field( $field ) ? $this->get_time_field_default_values( $field ) : ( $this->is_address_field( $field ) ? $this->get_address_field_default_values( $field ) : (string) $this->get_field_property( $field, 'defaultValue' ) ),
+				'default_country'    => $this->is_address_field( $field ) ? (string) $this->get_field_property( $field, 'defaultCountry' ) : '',
 				'admin_label'        => (string) $this->get_field_property( $field, 'adminLabel' ),
 			),
 		);
@@ -464,6 +479,27 @@ class FFE_Save_Controller {
 		return $payload;
 	}
 
+	private function get_address_field_default_values( $field ) {
+		$inputs  = $this->normalize_address_field_inputs( $field );
+		$payload = array();
+
+		foreach ( $inputs as $input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! preg_match( '/\.(?:1|2|3|4|5|6)$/', $input_id ) || ! empty( rgar( $input, 'isHidden' ) ) ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'id'           => $input_id,
+				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
+				'defaultValue' => (string) rgar( $input, 'defaultValue' ),
+			);
+		}
+
+		return $payload;
+	}
+
 	private function get_time_field_inputs( $field ) {
 		$inputs  = $this->normalize_time_field_inputs( $field );
 		$payload = array();
@@ -477,6 +513,28 @@ class FFE_Save_Controller {
 				'id'           => (string) rgar( $input, 'id' ),
 				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
 				'customLabel'  => (string) rgar( $input, 'customLabel' ),
+			);
+		}
+
+		return $payload;
+	}
+
+	private function get_time_field_default_values( $field ) {
+		$inputs          = $this->normalize_time_field_inputs( $field );
+		$legacy_defaults = $this->get_legacy_time_default_values( $field );
+		$payload         = array();
+
+		foreach ( $inputs as $input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! preg_match( '/\.(?:1|2|3)$/', $input_id ) ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'id'           => $input_id,
+				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
+				'defaultValue' => '' !== (string) rgar( $input, 'defaultValue' ) ? (string) rgar( $input, 'defaultValue' ) : ( isset( $legacy_defaults[ $input_id ] ) ? $legacy_defaults[ $input_id ] : '' ),
 			);
 		}
 
@@ -573,6 +631,72 @@ class FFE_Save_Controller {
 		}
 		unset( $input );
 
+		$this->set_field_property( $field, 'inputs', $normalized_inputs );
+	}
+
+	private function set_time_field_default_values( &$field, $default_values ) {
+		$normalized_inputs      = $this->normalize_time_field_inputs( $field );
+		$requested_inputs       = is_array( $default_values ) ? array_values( $default_values ) : array();
+		$requested_inputs_by_id = array();
+
+		foreach ( $requested_inputs as $requested_input ) {
+			$requested_id = (string) rgar( $requested_input, 'id' );
+
+			if ( '' === $requested_id ) {
+				continue;
+			}
+
+			$requested_inputs_by_id[ $requested_id ] = $requested_input;
+		}
+
+		foreach ( $normalized_inputs as &$input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! isset( $requested_inputs_by_id[ $input_id ] ) ) {
+				continue;
+			}
+
+			$requested_input       = $requested_inputs_by_id[ $input_id ];
+			$input['defaultValue'] = (string) rgar( $requested_input, 'defaultValue' );
+
+			if ( preg_match( '/\.3$/', $input_id ) ) {
+				$input['defaultValue'] = strtolower( $input['defaultValue'] );
+			}
+		}
+		unset( $input );
+
+		$this->set_field_property( $field, 'defaultValue', '' );
+		$this->set_field_property( $field, 'inputs', $normalized_inputs );
+	}
+
+	private function set_address_field_default_values( &$field, $default_values ) {
+		$normalized_inputs      = $this->normalize_address_field_inputs( $field );
+		$requested_inputs       = is_array( $default_values ) ? array_values( $default_values ) : array();
+		$requested_inputs_by_id = array();
+
+		foreach ( $requested_inputs as $requested_input ) {
+			$requested_id = (string) rgar( $requested_input, 'id' );
+
+			if ( '' === $requested_id ) {
+				continue;
+			}
+
+			$requested_inputs_by_id[ $requested_id ] = $requested_input;
+		}
+
+		foreach ( $normalized_inputs as &$input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! isset( $requested_inputs_by_id[ $input_id ] ) ) {
+				continue;
+			}
+
+			$requested_input       = $requested_inputs_by_id[ $input_id ];
+			$input['defaultValue'] = (string) rgar( $requested_input, 'defaultValue' );
+		}
+		unset( $input );
+
+		$this->set_field_property( $field, 'defaultValue', '' );
 		$this->set_field_property( $field, 'inputs', $normalized_inputs );
 	}
 
@@ -713,6 +837,32 @@ class FFE_Save_Controller {
 		}
 
 		return $normalized;
+	}
+
+	private function get_legacy_time_default_values( $field ) {
+		$default_value = trim( (string) $this->get_field_property( $field, 'defaultValue' ) );
+		$field_id      = absint( $this->get_field_property( $field, 'id' ) );
+		$matches       = array();
+
+		if ( '' === $default_value || ! preg_match( '/^(\d*):(\d*)\s*(.*)$/', $default_value, $matches ) ) {
+			return array();
+		}
+
+		$defaults = array();
+
+		if ( '' !== trim( (string) rgar( $matches, 1, '' ) ) ) {
+			$defaults[ $field_id . '.1' ] = trim( (string) rgar( $matches, 1, '' ) );
+		}
+
+		if ( '' !== trim( (string) rgar( $matches, 2, '' ) ) ) {
+			$defaults[ $field_id . '.2' ] = trim( (string) rgar( $matches, 2, '' ) );
+		}
+
+		if ( in_array( strtolower( trim( (string) rgar( $matches, 3, '' ) ) ), array( 'am', 'pm' ), true ) ) {
+			$defaults[ $field_id . '.3' ] = strtolower( trim( (string) rgar( $matches, 3, '' ) ) );
+		}
+
+		return $defaults;
 	}
 
 	private function normalize_name_field_inputs( $field ) {
@@ -959,6 +1109,14 @@ class FFE_Save_Controller {
 		$input_type = $this->get_field_property( $field, 'inputType' );
 
 		return $input_type ? (string) $input_type : (string) $this->get_field_property( $field, 'type' );
+	}
+
+	private function is_time_field( $field ) {
+		return 'time' === $this->get_field_input_type( $field );
+	}
+
+	private function is_address_field( $field ) {
+		return 'address' === $this->get_field_input_type( $field );
 	}
 
 	private function get_field_choices( $field ) {

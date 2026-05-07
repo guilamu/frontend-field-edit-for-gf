@@ -19,6 +19,7 @@ class FFE_Config_Resolver {
 	const SETTING_DESCRIPTION = 'description';
 	const SETTING_PLACEHOLDER = 'placeholder';
 	const SETTING_DEFAULT_VALUE = 'default_value';
+	const SETTING_DEFAULT_COUNTRY = 'default_country';
 	const SETTING_ADMIN_LABEL = 'admin_label';
 	const SETTING_ADDRESS_FIELDS = 'address_fields';
 
@@ -43,6 +44,7 @@ class FFE_Config_Resolver {
 			self::SETTING_DESCRIPTION,
 			self::SETTING_PLACEHOLDER,
 			self::SETTING_DEFAULT_VALUE,
+			self::SETTING_DEFAULT_COUNTRY,
 			self::SETTING_ADMIN_LABEL,
 		);
 	}
@@ -86,6 +88,7 @@ class FFE_Config_Resolver {
 			self::SETTING_DESCRIPTION,
 			self::SETTING_TIME_FORMAT,
 			self::SETTING_TIME_SUB_LABELS,
+			self::SETTING_DEFAULT_VALUE,
 			self::SETTING_REQUIRED,
 		);
 	}
@@ -104,6 +107,8 @@ class FFE_Config_Resolver {
 		return array(
 			self::SETTING_LABEL,
 			self::SETTING_ADDRESS_FIELDS,
+			self::SETTING_DEFAULT_VALUE,
+			self::SETTING_DEFAULT_COUNTRY,
 			self::SETTING_REQUIRED,
 			self::SETTING_DESCRIPTION,
 			self::SETTING_ADMIN_LABEL,
@@ -125,6 +130,7 @@ class FFE_Config_Resolver {
 			self::SETTING_DESCRIPTION   => esc_html__( 'Description', 'frontend-field-edit-for-gf' ),
 			self::SETTING_PLACEHOLDER   => esc_html__( 'Placeholder', 'frontend-field-edit-for-gf' ),
 			self::SETTING_DEFAULT_VALUE => esc_html__( 'Default Value', 'frontend-field-edit-for-gf' ),
+			self::SETTING_DEFAULT_COUNTRY => esc_html__( 'Default Country', 'frontend-field-edit-for-gf' ),
 			self::SETTING_ADMIN_LABEL   => esc_html__( 'Admin Field Label', 'frontend-field-edit-for-gf' ),
 		);
 	}

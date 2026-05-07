@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.0\n"
+"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/guilamu/frontend-field-edit-for-gf/issues\n"
-"POT-Creation-Date: 2026-05-06 00:00+0000\n"
+"POT-Creation-Date: 2026-05-07 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,6 +112,12 @@ msgstr ""
 msgid "Default Value"
 msgstr ""
 
+msgid "Default Values"
+msgstr ""
+
+msgid "Default Country"
+msgstr ""
+
 msgid "Delete choice"
 msgstr ""
 
@@ -136,10 +142,16 @@ msgstr ""
 msgid "Duplicate Address field inputs were submitted."
 msgstr ""
 
+msgid "Duplicate Address field default value inputs were submitted."
+msgstr ""
+
 msgid "Duplicate Name field inputs were submitted."
 msgstr ""
 
 msgid "Duplicate Time field inputs were submitted."
+msgstr ""
+
+msgid "Duplicate Time field default value inputs were submitted."
 msgstr ""
 
 msgid "Dynamic default values and merge tags are out of scope for v1."
@@ -265,6 +277,9 @@ msgstr ""
 msgid "Number fields require a numeric default value."
 msgstr ""
 
+msgid "One of the Address field default value inputs was not recognized."
+msgstr ""
+
 msgid "One of the Address field inputs was not recognized."
 msgstr ""
 
@@ -272,6 +287,9 @@ msgid "One of the Name field inputs was not recognized."
 msgstr ""
 
 msgid "One of the Time field inputs was not recognized."
+msgstr ""
+
+msgid "One of the Time field default value inputs was not recognized."
 msgstr ""
 
 msgid "Only supported options for this field type are shown here. Global plugin settings can still restrict what appears on the frontend."
@@ -290,6 +308,15 @@ msgid "Placeholder"
 msgstr ""
 
 msgid "Placeholders must be 200 characters or fewer."
+msgstr ""
+
+msgid "Address field default values could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Address field default values must be 500 characters or fewer."
+msgstr ""
+
+msgid "Default countries must be 200 characters or fewer."
 msgstr ""
 
 msgid "Previous"
@@ -394,6 +421,9 @@ msgstr ""
 msgid "This field type does not support default value editing in v1."
 msgstr ""
 
+msgid "This field type does not support default country editing."
+msgstr ""
+
 msgid "This field type does not support email confirmation editing."
 msgstr ""
 
@@ -421,6 +451,24 @@ msgstr ""
 msgid "Time field custom sub-labels must be 500 characters or fewer."
 msgstr ""
 
+msgid "Time field default values could not be saved because the request payload was invalid."
+msgstr ""
+
+msgid "Time field default values must be 20 characters or fewer."
+msgstr ""
+
+msgid "Time field default hours must match the current time format."
+msgstr ""
+
+msgid "Time field default minutes must be between 00 and 59."
+msgstr ""
+
+msgid "Time field default minutes must be 00 when the hour is 24."
+msgstr ""
+
+msgid "Time field AM/PM defaults must be either am or pm."
+msgstr ""
+
 msgid "Time field sub-labels could not be saved because the request payload was invalid."
 msgstr ""
 
@@ -437,6 +485,9 @@ msgid "Titles must be 500 characters or fewer."
 msgstr ""
 
 msgid "Too many frontend field edits were attempted. Please wait a minute and try again."
+msgstr ""
+
+msgid "The selected default country was not recognized."
 msgstr ""
 
 msgid "Unable to save the requested change."

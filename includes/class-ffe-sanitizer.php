@@ -20,6 +20,10 @@ class FFE_Sanitizer {
 			return self::sanitize_address_fields( $value );
 		}
 
+		if ( FFE_Config_Resolver::SETTING_DEFAULT_VALUE === $setting_key && self::is_json_array_payload( $value ) ) {
+			return self::sanitize_input_default_values( $value );
+		}
+
 		$value = is_scalar( $value ) ? (string) $value : '';
 
 		switch ( $setting_key ) {
@@ -40,6 +44,7 @@ class FFE_Sanitizer {
 
 			case FFE_Config_Resolver::SETTING_PLACEHOLDER:
 			case FFE_Config_Resolver::SETTING_DEFAULT_VALUE:
+			case FFE_Config_Resolver::SETTING_DEFAULT_COUNTRY:
 			case FFE_Config_Resolver::SETTING_ADMIN_LABEL:
 				return self::sanitize_plain_text( $value );
 
@@ -94,6 +99,28 @@ class FFE_Sanitizer {
 				'isSelected'  => '1' === self::sanitize_checkbox_value( rgar( $choice, 'isSelected' ) ),
 				'key'         => sanitize_text_field( (string) rgar( $choice, 'key' ) ),
 				'sourceIndex' => isset( $choice['sourceIndex'] ) ? absint( $choice['sourceIndex'] ) : null,
+			);
+		}
+
+		return $sanitized;
+	}
+
+	private static function sanitize_input_default_values( $value ) {
+		$default_values = self::decode_json_array_payload( $value );
+		$sanitized      = array();
+
+		foreach ( $default_values as $default_value ) {
+			if ( ! is_array( $default_value ) ) {
+				continue;
+			}
+
+			$input_id                 = sanitize_text_field( (string) rgar( $default_value, 'id' ) );
+			$normalized_default_value = self::sanitize_plain_text( rgar( $default_value, 'defaultValue' ) );
+
+			$sanitized[] = array(
+				'id'           => $input_id,
+				'defaultLabel' => self::sanitize_plain_text( rgar( $default_value, 'defaultLabel' ) ),
+				'defaultValue' => $normalized_default_value,
 			);
 		}
 
@@ -166,6 +193,26 @@ class FFE_Sanitizer {
 
 	private static function decode_choice_payload( $value ) {
 		return self::decode_json_array_payload( $value );
+	}
+
+	private static function is_json_array_payload( $value ) {
+		if ( is_array( $value ) ) {
+			return true;
+		}
+
+		if ( ! is_string( $value ) ) {
+			return false;
+		}
+
+		$value = ltrim( $value );
+
+		if ( '' === $value || '[' !== $value[0] ) {
+			return false;
+		}
+
+		$decoded = json_decode( $value, true );
+
+		return JSON_ERROR_NONE === json_last_error() && is_array( $decoded );
 	}
 
 	private static function decode_json_array_payload( $value ) {

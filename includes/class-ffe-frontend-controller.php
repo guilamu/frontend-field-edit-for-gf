@@ -134,7 +134,8 @@ class FFE_Frontend_Controller {
 			'address_fields'     => $this->get_address_field_inputs( $field ),
 			'description'        => (string) rgar( $field, 'description' ),
 			'placeholder'        => (string) rgar( $field, 'placeholder' ),
-			'default_value'      => (string) rgar( $field, 'defaultValue' ),
+			'default_value'      => $this->is_time_field( $field ) ? $this->get_time_field_default_values( $field ) : ( $this->is_address_field( $field ) ? $this->get_address_field_default_values( $field ) : (string) rgar( $field, 'defaultValue' ) ),
+			'default_country'    => $this->is_address_field( $field ) ? (string) $this->get_field_property( $field, 'defaultCountry' ) : '',
 			'admin_label'        => (string) rgar( $field, 'adminLabel' ),
 		);
 	}
@@ -185,6 +186,27 @@ class FFE_Frontend_Controller {
 		return $payload;
 	}
 
+	private function get_address_field_default_values( $field ) {
+		$inputs   = $this->normalize_address_field_inputs( $field );
+		$payload  = array();
+
+		foreach ( $inputs as $input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! preg_match( '/\.(?:1|2|3|4|5|6)$/', $input_id ) || ! empty( rgar( $input, 'isHidden' ) ) ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'id'           => $input_id,
+				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
+				'defaultValue' => (string) rgar( $input, 'defaultValue' ),
+			);
+		}
+
+		return $payload;
+	}
+
 	private function get_time_field_inputs( $field ) {
 		$inputs  = $this->normalize_time_field_inputs( $field );
 		$payload = array();
@@ -198,6 +220,28 @@ class FFE_Frontend_Controller {
 				'id'           => (string) rgar( $input, 'id' ),
 				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
 				'customLabel'  => (string) rgar( $input, 'customLabel' ),
+			);
+		}
+
+		return $payload;
+	}
+
+	private function get_time_field_default_values( $field ) {
+		$inputs          = $this->normalize_time_field_inputs( $field );
+		$legacy_defaults = $this->get_legacy_time_default_values( $field );
+		$payload         = array();
+
+		foreach ( $inputs as $input ) {
+			$input_id = (string) rgar( $input, 'id' );
+
+			if ( ! preg_match( '/\.(?:1|2|3)$/', $input_id ) ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'id'           => $input_id,
+				'defaultLabel' => (string) rgar( $input, 'defaultLabel', rgar( $input, 'label' ) ),
+				'defaultValue' => '' !== (string) rgar( $input, 'defaultValue' ) ? (string) rgar( $input, 'defaultValue' ) : ( isset( $legacy_defaults[ $input_id ] ) ? $legacy_defaults[ $input_id ] : '' ),
 			);
 		}
 
@@ -297,6 +341,32 @@ class FFE_Frontend_Controller {
 		}
 
 		return $normalized;
+	}
+
+	private function get_legacy_time_default_values( $field ) {
+		$default_value = trim( (string) $this->get_field_property( $field, 'defaultValue' ) );
+		$field_id      = absint( $this->get_field_property( $field, 'id' ) );
+		$matches       = array();
+
+		if ( '' === $default_value || ! preg_match( '/^(\d*):(\d*)\s*(.*)$/', $default_value, $matches ) ) {
+			return array();
+		}
+
+		$defaults = array();
+
+		if ( '' !== trim( (string) rgar( $matches, 1, '' ) ) ) {
+			$defaults[ $field_id . '.1' ] = trim( (string) rgar( $matches, 1, '' ) );
+		}
+
+		if ( '' !== trim( (string) rgar( $matches, 2, '' ) ) ) {
+			$defaults[ $field_id . '.2' ] = trim( (string) rgar( $matches, 2, '' ) );
+		}
+
+		if ( in_array( strtolower( trim( (string) rgar( $matches, 3, '' ) ) ), array( 'am', 'pm' ), true ) ) {
+			$defaults[ $field_id . '.3' ] = strtolower( trim( (string) rgar( $matches, 3, '' ) ) );
+		}
+
+		return $defaults;
 	}
 
 	private function get_default_name_inputs( $field_id ) {
@@ -501,6 +571,14 @@ class FFE_Frontend_Controller {
 		$input_type = $this->get_field_property( $field, 'inputType' );
 
 		return $input_type ? (string) $input_type : (string) rgar( $field, 'type' );
+	}
+
+	private function is_time_field( $field ) {
+		return 'time' === $this->get_field_input_type( $field );
+	}
+
+	private function is_address_field( $field ) {
+		return 'address' === $this->get_field_input_type( $field );
 	}
 
 	private function get_field_choices( $field ) {

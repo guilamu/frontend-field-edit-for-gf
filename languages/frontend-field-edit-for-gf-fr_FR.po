@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.0\n"
+"Project-Id-Version: Frontend Field Edit for Gravity Forms 1.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/guilamu/frontend-field-edit-for-gf/issues\n"
-"POT-Creation-Date: 2026-05-06 00:00+0000\n"
-"PO-Revision-Date: 2026-05-06 20:40+0200\n"
+"POT-Creation-Date: 2026-05-07 00:00+0000\n"
+"PO-Revision-Date: 2026-05-07 10:16+0200\n"
 "Last-Translator: GitHub Copilot <copilot@github.com>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: frontend-field-edit-for-gf\n"
-"X-Generator: Poedit 3.9\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "12 hour"
 msgstr "12 heures"
@@ -113,6 +113,12 @@ msgstr "Valeur par défaut pour les nouveaux champs pris en charge ajoutés à c
 msgid "Default Value"
 msgstr "Valeur par défaut"
 
+msgid "Default Values"
+msgstr "Valeurs par défaut"
+
+msgid "Default Country"
+msgstr "Pays par défaut"
+
 msgid "Delete choice"
 msgstr "Supprimer le choix"
 
@@ -137,11 +143,17 @@ msgstr "Liste déroulante"
 msgid "Duplicate Address field inputs were submitted."
 msgstr "Des entrées de champ Adresse dupliquées ont été envoyées."
 
+msgid "Duplicate Address field default value inputs were submitted."
+msgstr "Des entrées de valeur par défaut du champ Adresse en double ont été envoyées."
+
 msgid "Duplicate Name field inputs were submitted."
 msgstr "Des entrées de champ Nom dupliquées ont été envoyées."
 
 msgid "Duplicate Time field inputs were submitted."
 msgstr "Des entrées de champ Heure dupliquées ont été envoyées."
+
+msgid "Duplicate Time field default value inputs were submitted."
+msgstr "Des entrées de valeur par défaut du champ Heure en double ont été envoyées."
 
 msgid "Dynamic default values and merge tags are out of scope for v1."
 msgstr "Les valeurs par défaut dynamiques et les balises de fusion sont hors périmètre pour la v1."
@@ -266,6 +278,9 @@ msgstr "Nombre"
 msgid "Number fields require a numeric default value."
 msgstr "Les champs Nombre nécessitent une valeur par défaut numérique."
 
+msgid "One of the Address field default value inputs was not recognized."
+msgstr "L'une des entrées de valeur par défaut du champ Adresse n'a pas été reconnue."
+
 msgid "One of the Address field inputs was not recognized."
 msgstr "L'une des entrées du champ Adresse n'a pas été reconnue."
 
@@ -274,6 +289,9 @@ msgstr "L'une des entrées du champ Nom n'a pas été reconnue."
 
 msgid "One of the Time field inputs was not recognized."
 msgstr "L'une des entrées du champ Heure n'a pas été reconnue."
+
+msgid "One of the Time field default value inputs was not recognized."
+msgstr "L'une des entrées de valeur par défaut du champ Heure n'a pas été reconnue."
 
 msgid "Only supported options for this field type are shown here. Global plugin settings can still restrict what appears on the frontend."
 msgstr "Seules les options prises en charge pour ce type de champ sont affichées ici. Les réglages globaux de l'extension peuvent encore restreindre ce qui apparaît en frontal."
@@ -292,6 +310,15 @@ msgstr "Texte indicatif"
 
 msgid "Placeholders must be 200 characters or fewer."
 msgstr "Les textes indicatifs doivent contenir 200 caractères ou moins."
+
+msgid "Address field default values could not be saved because the request payload was invalid."
+msgstr "Les valeurs par défaut du champ d'adresse n'ont pas pu être enregistrées car la charge utile de la requête était invalide."
+
+msgid "Address field default values must be 500 characters or fewer."
+msgstr "Les valeurs par défaut du champ d'adresse doivent contenir 500 caractères ou moins."
+
+msgid "Default countries must be 200 characters or fewer."
+msgstr "Les pays par défaut doivent contenir 200 caractères ou moins."
 
 msgid "Previous"
 msgstr "Précédent"
@@ -395,6 +422,9 @@ msgstr "Ce type de champ ne prend pas en charge la modification du libellé de l
 msgid "This field type does not support default value editing in v1."
 msgstr "Ce type de champ ne prend pas en charge la modification de la valeur par défaut dans la v1."
 
+msgid "This field type does not support default country editing."
+msgstr "Ce type de champ ne prend pas en charge la modification du pays par défaut."
+
 msgid "This field type does not support email confirmation editing."
 msgstr "Ce type de champ ne prend pas en charge la modification de la confirmation de l'e-mail."
 
@@ -422,6 +452,24 @@ msgstr "Heure"
 msgid "Time field custom sub-labels must be 500 characters or fewer."
 msgstr "Les sous-libellés personnalisés du champ Heure doivent contenir 500 caractères ou moins."
 
+msgid "Time field default values could not be saved because the request payload was invalid."
+msgstr "Les valeurs par défaut du champ Heure n'ont pas pu être enregistrées car la charge utile de la requête était invalide."
+
+msgid "Time field default values must be 20 characters or fewer."
+msgstr "Les valeurs par défaut du champ Heure doivent contenir 20 caractères ou moins."
+
+msgid "Time field default hours must match the current time format."
+msgstr "Les heures par défaut du champ Heure doivent correspondre au format horaire actuel."
+
+msgid "Time field default minutes must be between 00 and 59."
+msgstr "Les minutes par défaut du champ Heure doivent être comprises entre 00 et 59."
+
+msgid "Time field default minutes must be 00 when the hour is 24."
+msgstr "Les minutes par défaut du champ Heure doivent être 00 lorsque l'heure est 24."
+
+msgid "Time field AM/PM defaults must be either am or pm."
+msgstr "Les valeurs AM/PM par défaut du champ Heure doivent être « am » ou « pm »."
+
 msgid "Time field sub-labels could not be saved because the request payload was invalid."
 msgstr "Les sous-libellés du champ Heure n'ont pas pu être enregistrés car la charge utile de la requête était invalide."
 
@@ -439,6 +487,9 @@ msgstr "Les titres doivent contenir 500 caractères ou moins."
 
 msgid "Too many frontend field edits were attempted. Please wait a minute and try again."
 msgstr "Trop de modifications de champs en frontal ont été tentées. Veuillez patienter une minute puis réessayer."
+
+msgid "The selected default country was not recognized."
+msgstr "Le pays par défaut sélectionné n'a pas été reconnu."
 
 msgid "Unable to save the requested change."
 msgstr "Impossible d'enregistrer la modification demandée."

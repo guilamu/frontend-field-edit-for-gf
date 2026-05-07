@@ -476,6 +476,9 @@
 			var isNameFields = isNameFieldsSetting( settingKey );
 			var isTimeFormat = isTimeFormatSetting( settingKey );
 			var isTimeSubLabels = isTimeSubLabelsSetting( settingKey );
+			var isTimeDefaultValues = settingKey === 'default_value' && isTimeFieldConfig( fieldConfig );
+			var isAddressDefaultValues = settingKey === 'default_value' && isAddressFieldConfig( fieldConfig );
+			var isAddressDefaultCountry = isAddressDefaultCountrySetting( settingKey ) && isAddressFieldConfig( fieldConfig );
 			var isAddressFields = isAddressFieldsSetting( settingKey );
 			var value;
 			var isMultiline = settingKey === 'description';
@@ -488,6 +491,12 @@
 				value = normalizeNameFieldListValue( fieldConfig.values[ settingKey ] );
 			} else if ( isTimeSubLabels ) {
 				value = normalizeTimeSubLabelListValue( fieldConfig.values[ settingKey ] );
+			} else if ( isTimeDefaultValues ) {
+				value = getNormalizedTimeDefaultValueList( fieldConfig, fieldConfig.values[ settingKey ] );
+			} else if ( isAddressDefaultValues ) {
+				value = getNormalizedAddressDefaultValueList( fieldConfig, fieldConfig.values[ settingKey ] );
+			} else if ( isAddressDefaultCountry ) {
+				value = normalizeSettingValue( settingKey, fieldConfig.values[ settingKey ] );
 			} else if ( isAddressFields ) {
 				value = normalizeAddressFieldListValue( fieldConfig.values[ settingKey ], false );
 			} else {
@@ -516,6 +525,25 @@
 
 			if ( isTimeSubLabels ) {
 				html += buildTimeSubLabelsControl( fieldConfig, controlId, value );
+				return;
+			}
+
+			if ( isTimeDefaultValues ) {
+				html += buildTimeDefaultValuesControl( fieldConfig, controlId, value );
+				return;
+			}
+
+			if ( isAddressDefaultValues ) {
+				html += buildAddressDefaultValuesControl( fieldConfig, controlId, value );
+				return;
+			}
+
+			if ( isAddressDefaultCountry ) {
+				if ( fieldConfig && fieldConfig.addressConfig && fieldConfig.addressConfig.fixedCountry ) {
+					return;
+				}
+
+				html += buildAddressDefaultCountryControl( fieldConfig, controlId, value );
 				return;
 			}
 
@@ -579,6 +607,57 @@
 		return html;
 	}
 
+	function buildTimeDefaultValuesControl( fieldConfig, controlId, timeDefaultValues ) {
+		var html = '';
+
+		html += '<div class="ffe-editor-panel__control ffe-editor-panel__control--time-default-values" data-setting-key="default_value" data-control-id="' + escapeHtml( controlId ) + '">';
+		html += '<span class="ffe-editor-panel__control-label">' + escapeHtml( getString( 'defaultValuesLabel', 'Default Values' ) ) + '</span>';
+		html += '<div class="field_custom_inputs_ui gform-sidebar-setting-grid-wrapper gform-sidebar-setting-grid-wrapper__two-column">';
+		html += '<div class="gform-sidebar-setting-grid-header"><span>' + escapeHtml( getString( 'fieldLabel', 'Field' ) ) + '</span><span>' + escapeHtml( humanizeSetting( 'default_value' ) ) + '</span></div>';
+
+		$.each( timeDefaultValues, function( index, timeDefaultValue ) {
+			html += buildTimeDefaultValueRowMarkup( controlId, timeDefaultValue, index );
+		} );
+
+		html += '</div>';
+		html += '</div>';
+
+		return html;
+	}
+
+	function buildAddressDefaultValuesControl( fieldConfig, controlId, addressDefaultValues ) {
+		var html = '';
+
+		html += '<div class="ffe-editor-panel__control ffe-editor-panel__control--address-default-values" data-setting-key="default_value" data-control-id="' + escapeHtml( controlId ) + '">';
+		html += '<span class="ffe-editor-panel__control-label">' + escapeHtml( getString( 'defaultValuesLabel', 'Default Values' ) ) + '</span>';
+		html += '<div class="field_custom_inputs_ui gform-sidebar-setting-grid-wrapper gform-sidebar-setting-grid-wrapper__two-column">';
+		html += '<div class="gform-sidebar-setting-grid-header"><span>' + escapeHtml( getString( 'fieldLabel', 'Field' ) ) + '</span><span>' + escapeHtml( humanizeSetting( 'default_value' ) ) + '</span></div>';
+
+		$.each( addressDefaultValues, function( index, addressDefaultValue ) {
+			html += buildAddressDefaultValueRowMarkup( controlId, addressDefaultValue, index );
+		} );
+
+		html += '</div>';
+		html += '</div>';
+
+		return html;
+	}
+
+	function buildAddressDefaultCountryControl( fieldConfig, controlId, defaultCountry ) {
+		var html = '';
+		var addressConfig = $.isPlainObject( fieldConfig && fieldConfig.addressConfig ) ? fieldConfig.addressConfig : {};
+		var countryOptions = normalizeAddressOptionList( addressConfig.countryOptions );
+
+		html += '<div class="ffe-editor-panel__control ffe-editor-panel__control--address-default-country" data-setting-key="default_country">';
+		html += '<label class="ffe-editor-panel__control-label" for="' + escapeHtml( controlId ) + '">' + escapeHtml( humanizeSetting( 'default_country' ) ) + '</label>';
+		html += '<select id="' + escapeHtml( controlId ) + '">';
+		html += buildAddressOptionsHtml( countryOptions, normalizeSettingValue( 'default_country', defaultCountry ), '' );
+		html += '</select>';
+		html += '</div>';
+
+		return html;
+	}
+
 	function buildAddressFieldsControl( fieldConfig, controlId, addressFields ) {
 		var html = '';
 
@@ -627,6 +706,36 @@
 				'<input class="field_custom_input_default_label" type="text" id="' + escapeHtml( customLabelId ) + '" placeholder="' + escapeHtml( timeField.defaultLabel ) + '" value="' + escapeHtml( timeField.customLabel ) + '" />' +
 				'<input type="hidden" class="ffe-time-field-id" value="' + escapeHtml( timeField.id ) + '" />' +
 				'<input type="hidden" class="ffe-time-field-default-label" value="' + escapeHtml( timeField.defaultLabel ) + '" />' +
+			'</div>';
+	}
+
+	function buildTimeDefaultValueRowMarkup( controlId, timeDefaultValue, index ) {
+		var defaultValueId;
+
+		timeDefaultValue = normalizeTimeDefaultValue( timeDefaultValue );
+		defaultValueId = controlId + '-default-value-' + index;
+
+		return '' +
+			'<div data-input-id="' + escapeHtml( timeDefaultValue.id ) + '" class="default_input_value_row field_custom_input_row field_custom_input_row_' + escapeHtml( timeDefaultValue.id.replace( /[^a-z0-9_-]/ig, '_' ) ) + '">' +
+				'<label for="' + escapeHtml( defaultValueId ) + '">' + escapeHtml( timeDefaultValue.defaultLabel ) + '</label>' +
+				'<input class="default_input_value" type="text" id="' + escapeHtml( defaultValueId ) + '" value="' + escapeHtml( timeDefaultValue.defaultValue ) + '" />' +
+				'<input type="hidden" class="ffe-time-default-value-id" value="' + escapeHtml( timeDefaultValue.id ) + '" />' +
+				'<input type="hidden" class="ffe-time-default-value-label" value="' + escapeHtml( timeDefaultValue.defaultLabel ) + '" />' +
+			'</div>';
+	}
+
+	function buildAddressDefaultValueRowMarkup( controlId, addressDefaultValue, index ) {
+		var defaultValueId;
+
+		addressDefaultValue = normalizeTimeDefaultValue( addressDefaultValue );
+		defaultValueId = controlId + '-default-value-' + index;
+
+		return '' +
+			'<div data-input-id="' + escapeHtml( addressDefaultValue.id ) + '" class="default_input_value_row field_custom_input_row field_custom_input_row_' + escapeHtml( addressDefaultValue.id.replace( /[^a-z0-9_-]/ig, '_' ) ) + '">' +
+				'<label for="' + escapeHtml( defaultValueId ) + '">' + escapeHtml( addressDefaultValue.defaultLabel ) + '</label>' +
+				'<input class="default_input_value" type="text" id="' + escapeHtml( defaultValueId ) + '" value="' + escapeHtml( addressDefaultValue.defaultValue ) + '" />' +
+				'<input type="hidden" class="ffe-address-default-value-id" value="' + escapeHtml( addressDefaultValue.id ) + '" />' +
+				'<input type="hidden" class="ffe-address-default-value-label" value="' + escapeHtml( addressDefaultValue.defaultLabel ) + '" />' +
 			'</div>';
 	}
 
@@ -807,6 +916,10 @@
 			orderedSettings = moveSettingAfter( orderedSettings, 'time_sub_labels', orderedSettings.indexOf( 'time_format' ) !== -1 ? 'time_format' : 'description' );
 		}
 
+		if ( isAddressFieldConfig( fieldConfig ) ) {
+			orderedSettings = moveSettingAfter( orderedSettings, 'default_country', orderedSettings.indexOf( 'default_value' ) !== -1 ? 'default_value' : 'address_fields' );
+		}
+
 		if ( ! hadRequired ) {
 			return orderedSettings;
 		}
@@ -844,6 +957,10 @@
 
 	function isAddressFieldsSetting( settingKey ) {
 		return settingKey === 'address_fields';
+	}
+
+	function isAddressDefaultCountrySetting( settingKey ) {
+		return settingKey === 'default_country';
 	}
 
 	function isCheckboxSetting( settingKey ) {
@@ -892,6 +1009,13 @@
 		var inputType = String( fieldConfig && fieldConfig.inputType ? fieldConfig.inputType : '' );
 
 		return fieldType === 'time' || inputType === 'time';
+	}
+
+	function isAddressFieldConfig( fieldConfig ) {
+		var fieldType = String( fieldConfig && fieldConfig.type ? fieldConfig.type : '' );
+		var inputType = String( fieldConfig && fieldConfig.inputType ? fieldConfig.inputType : '' );
+
+		return fieldType === 'address' || inputType === 'address';
 	}
 
 	function normalizeChoiceListValue( value ) {
@@ -999,6 +1123,83 @@
 		};
 	}
 
+	function normalizeTimeDefaultValueList( value ) {
+		var timeDefaultValues = [];
+
+		if ( $.isArray( value ) ) {
+			$.each( value, function( index, timeDefaultValue ) {
+				timeDefaultValues.push( normalizeTimeDefaultValue( timeDefaultValue ) );
+			} );
+		}
+
+		return timeDefaultValues;
+	}
+
+	function getNormalizedTimeDefaultValueList( fieldConfig, value ) {
+		var fieldId = fieldConfig && fieldConfig.id != null ? String( fieldConfig.id ) : '';
+		var normalizedValues = normalizeTimeDefaultValueList( value );
+		var defaults = [
+			{ id: fieldId + '.1', defaultLabel: 'Hour', defaultValue: '' },
+			{ id: fieldId + '.2', defaultLabel: 'Minute', defaultValue: '' },
+			{ id: fieldId + '.3', defaultLabel: 'AM/PM', defaultValue: '' }
+		];
+
+		return $.map( defaults, function( defaultValue ) {
+			var suffix = getTimeFieldInputSuffix( defaultValue.id );
+			var existingValue = getTimeDefaultValueBySuffix( normalizedValues, suffix );
+
+			return normalizeTimeDefaultValue( $.extend( {}, defaultValue, existingValue || {} ) );
+		} );
+	}
+
+	function getNormalizedAddressDefaultValueList( fieldConfig, value ) {
+		var normalizedValues = normalizeTimeDefaultValueList( value );
+		var addressFields = normalizeAddressFieldListValue( fieldConfig && fieldConfig.values ? fieldConfig.values.address_fields : [], true );
+		var addressDefaultValues = [];
+
+		if ( ! addressFields.length ) {
+			return normalizedValues;
+		}
+
+		$.each( addressFields, function( index, addressField ) {
+			var suffix;
+			var existingValue;
+
+			if ( addressField.isHidden ) {
+				return;
+			}
+
+			suffix = getNameFieldInputSuffix( addressField.id );
+			existingValue = getAddressDefaultValueBySuffix( normalizedValues, suffix );
+
+			addressDefaultValues.push(
+				normalizeTimeDefaultValue(
+					$.extend(
+						{},
+						{
+							id: addressField.id,
+							defaultLabel: addressField.defaultLabel,
+							defaultValue: ''
+						},
+						existingValue || {}
+					)
+				)
+			);
+		} );
+
+		return addressDefaultValues;
+	}
+
+	function normalizeTimeDefaultValue( timeDefaultValue ) {
+		var normalizedTimeDefaultValue = $.isPlainObject( timeDefaultValue ) ? timeDefaultValue : {};
+
+		return {
+			id: normalizedTimeDefaultValue.id == null ? '' : String( normalizedTimeDefaultValue.id ),
+			defaultLabel: normalizedTimeDefaultValue.defaultLabel == null ? '' : String( normalizedTimeDefaultValue.defaultLabel ),
+			defaultValue: normalizedTimeDefaultValue.defaultValue == null ? '' : String( normalizedTimeDefaultValue.defaultValue )
+		};
+	}
+
 	function normalizeChoiceSourceIndex( value, fallback ) {
 		var parsedValue = parseInt( value, 10 );
 
@@ -1032,6 +1233,14 @@
 
 		if ( isTimeSubLabelsSetting( settingKey ) ) {
 			return getTimeSubLabelsControlValue( control );
+		}
+
+		if ( settingKey === 'default_value' && control.hasClass( 'ffe-editor-panel__control--time-default-values' ) ) {
+			return getTimeDefaultValuesControlValue( control );
+		}
+
+		if ( settingKey === 'default_value' && control.hasClass( 'ffe-editor-panel__control--address-default-values' ) ) {
+			return getAddressDefaultValuesControlValue( control );
 		}
 
 		if ( isAddressFieldsSetting( settingKey ) ) {
@@ -1103,6 +1312,42 @@
 		return timeFields;
 	}
 
+	function getTimeDefaultValuesControlValue( control ) {
+		var timeDefaultValues = [];
+
+		control.find( '.default_input_value_row' ).each( function() {
+			var row = $( this );
+
+			timeDefaultValues.push(
+				{
+					id: String( row.find( '.ffe-time-default-value-id' ).val() || row.data( 'inputId' ) || '' ),
+					defaultLabel: String( row.find( '.ffe-time-default-value-label' ).val() || '' ),
+					defaultValue: String( row.find( '.default_input_value' ).val() || '' )
+				}
+			);
+		} );
+
+		return timeDefaultValues;
+	}
+
+	function getAddressDefaultValuesControlValue( control ) {
+		var addressDefaultValues = [];
+
+		control.find( '.default_input_value_row' ).each( function() {
+			var row = $( this );
+
+			addressDefaultValues.push(
+				{
+					id: String( row.find( '.ffe-address-default-value-id' ).val() || row.data( 'inputId' ) || '' ),
+					defaultLabel: String( row.find( '.ffe-address-default-value-label' ).val() || '' ),
+					defaultValue: String( row.find( '.default_input_value' ).val() || '' )
+				}
+			);
+		} );
+
+		return addressDefaultValues;
+	}
+
 	function getAddressFieldsControlValue( control ) {
 		var addressFields = [];
 
@@ -1135,6 +1380,10 @@
 			return JSON.stringify( normalizeTimeSubLabelListValue( value ) );
 		}
 
+		if ( settingKey === 'default_value' && $.isArray( value ) ) {
+			return JSON.stringify( normalizeTimeDefaultValueList( value ) );
+		}
+
 		if ( isAddressFieldsSetting( settingKey ) ) {
 			return JSON.stringify( normalizeAddressFieldListValue( value, false ) );
 		}
@@ -1153,6 +1402,10 @@
 
 		if ( isTimeSubLabelsSetting( settingKey ) ) {
 			return JSON.stringify( normalizeTimeSubLabelListValue( value ) );
+		}
+
+		if ( settingKey === 'default_value' && $.isArray( value ) ) {
+			return JSON.stringify( normalizeTimeDefaultValueList( value ) );
 		}
 
 		if ( isAddressFieldsSetting( settingKey ) ) {
@@ -1219,6 +1472,7 @@
 		initializeChoiceControls( panel );
 		initializeNameFieldsControls( panel );
 		initializeAddressFieldsControls( panel );
+		initializeTimeDefaultValueControls( panel );
 		panel.find( '.ffe-editor-panel__status' ).empty();
 		updatePanelNavigationButtons( formId, panel );
 		panel.attr( 'aria-hidden', 'false' ).addClass( 'is-open' );
@@ -1260,6 +1514,27 @@
 
 		panel.find( '.ffe-editor-panel__control--address-fields' ).each( function() {
 			updateNameFieldsControlState( $( this ) );
+		} );
+	}
+
+	function initializeTimeDefaultValueControls( panel ) {
+		panel.off( 'change.ffeTimeDefaultValues', '.ffe-editor-panel__control--time-format select' );
+		panel.on( 'change.ffeTimeDefaultValues', '.ffe-editor-panel__control--time-format select', function() {
+			updateTimeDefaultValueControlState( panel );
+		} );
+
+		updateTimeDefaultValueControlState( panel );
+	}
+
+	function updateTimeDefaultValueControlState( panel ) {
+		var normalizedTimeFormat = normalizeSettingValue( 'time_format', panel.find( '.ffe-editor-panel__control--time-format select' ).first().val() || '12' );
+
+		panel.find( '.ffe-editor-panel__control--time-default-values .default_input_value_row' ).each( function() {
+			var row = $( this );
+			var suffix = getTimeFieldInputSuffix( row.find( '.ffe-time-default-value-id' ).val() || row.data( 'inputId' ) || '' );
+			var isVisible = suffix !== '3' || normalizedTimeFormat !== '24';
+
+			row.toggle( isVisible );
 		} );
 	}
 
@@ -1781,10 +2056,14 @@
 					}
 
 					patchedValue = updatedItem && updatedItem.values && Object.prototype.hasOwnProperty.call( updatedItem.values, change.settingKey ) ? updatedItem.values[ change.settingKey ] : response.data.value;
-					usedScopedRerender = rerenderItemDom( formId, itemType, itemKey, response.data );
+					usedScopedRerender = rerenderItemDom( formId, itemType, itemKey, response.data, change.settingKey );
 
 					if ( usedScopedRerender ) {
 						didScopedRerender = true;
+
+						if ( shouldPatchAfterScopedRerender( change.settingKey ) ) {
+							patchItemDom( formId, itemType, itemKey, change.settingKey, patchedValue, change.oldValue, config );
+						}
 					} else {
 						patchItemDom( formId, itemType, itemKey, change.settingKey, patchedValue, change.oldValue, config );
 					}
@@ -1816,22 +2095,22 @@
 		sendNext();
 	}
 
-	function rerenderItemDom( formId, itemType, itemKey, responseData ) {
+	function rerenderItemDom( formId, itemType, itemKey, responseData, settingKey ) {
 		if ( itemType !== 'field' || ! shouldUseRenderedFieldReplacement( responseData ) ) {
 			return false;
 		}
 
-		return rerenderFieldDom( formId, itemKey, responseData.renderedFieldHtml );
+		return rerenderFieldDom( formId, itemKey, responseData.renderedFieldHtml, shouldPreserveFieldInputState( settingKey ) );
 	}
 
 	function shouldUseRenderedFieldReplacement( responseData ) {
 		return !! ( responseData && responseData.renderedFieldHtml );
 	}
 
-	function rerenderFieldDom( formId, fieldId, renderedFieldHtml ) {
+	function rerenderFieldDom( formId, fieldId, renderedFieldHtml, preserveInputState ) {
 		var existingField = getFieldWrapper( formId, fieldId );
 		var renderedField;
-		var preservedInputState;
+		var preservedInputState = [];
 		var state = getState( formId );
 
 		if ( ! existingField.length || ! renderedFieldHtml ) {
@@ -1844,12 +2123,26 @@
 			return false;
 		}
 
-		preservedInputState = captureFieldInputState( existingField );
+		if ( preserveInputState !== false ) {
+			preservedInputState = captureFieldInputState( existingField );
+		}
+
 		existingField.replaceWith( renderedField );
 		refreshFieldButtons( formId, state );
-		restoreFieldInputState( getFieldWrapper( formId, fieldId ), preservedInputState );
+
+		if ( preserveInputState !== false ) {
+			restoreFieldInputState( getFieldWrapper( formId, fieldId ), preservedInputState );
+		}
 
 		return true;
+	}
+
+	function shouldPreserveFieldInputState( settingKey ) {
+		return settingKey !== 'default_value';
+	}
+
+	function shouldPatchAfterScopedRerender( settingKey ) {
+		return settingKey === 'default_country';
 	}
 
 	function captureFieldInputState( field ) {
@@ -2377,6 +2670,41 @@
 		patchRequiredAttributes( field, field.hasClass( 'gfield_contains_required' ) );
 	}
 
+	function patchTimeFieldDefaultValuesDom( formId, fieldId, value, oldValue, field ) {
+		var inputBaseId = getTimeFieldBaseInputId( formId, fieldId );
+		var timeDefaultValues = normalizeTimeDefaultValueList( value );
+		var timeState = $.extend( true, { inputs: {} }, field.data( 'ffeTimeFieldState' ) || {} );
+
+		$.each( [ '1', '2', '3' ], function( index, suffix ) {
+			var nextValue = getTimeDefaultValueBySuffix( timeDefaultValues, suffix );
+			var input = field.find( '#' + inputBaseId + '_' + suffix ).first();
+			var normalizedDefaultValue;
+
+			if ( ! nextValue || ! input.length ) {
+				return;
+			}
+
+			normalizedDefaultValue = String( nextValue.defaultValue || '' );
+
+			if ( input.is( 'select' ) ) {
+				input.val( normalizedDefaultValue || 'am' );
+				timeState.inputs[ suffix ] = $.extend( {}, timeState.inputs[ suffix ] || {}, {
+					value: normalizedDefaultValue || 'am'
+				} );
+
+				return;
+			}
+
+			input.attr( 'value', normalizedDefaultValue );
+			input.val( normalizedDefaultValue );
+			timeState.inputs[ suffix ] = $.extend( {}, timeState.inputs[ suffix ] || {}, {
+				value: normalizedDefaultValue
+			} );
+		} );
+
+		field.data( 'ffeTimeFieldState', timeState );
+	}
+
 	function captureTimeFieldState( field, formId, fieldId ) {
 		var inputBaseId = getTimeFieldBaseInputId( formId, fieldId );
 		var state = $.extend( true, { inputs: {} }, field.data( 'ffeTimeFieldState' ) || {} );
@@ -2604,6 +2932,32 @@
 		return matchedField;
 	}
 
+	function getTimeDefaultValueBySuffix( timeDefaultValues, suffix ) {
+		var matchedValue = null;
+
+		$.each( timeDefaultValues || [], function( index, timeDefaultValue ) {
+			if ( getTimeFieldInputSuffix( timeDefaultValue.id ) === suffix ) {
+				matchedValue = normalizeTimeDefaultValue( timeDefaultValue );
+				return false;
+			}
+		} );
+
+		return matchedValue;
+	}
+
+	function getAddressDefaultValueBySuffix( addressDefaultValues, suffix ) {
+		var matchedValue = null;
+
+		$.each( addressDefaultValues || [], function( index, addressDefaultValue ) {
+			if ( getNameFieldInputSuffix( addressDefaultValue.id ) === suffix ) {
+				matchedValue = normalizeTimeDefaultValue( addressDefaultValue );
+				return false;
+			}
+		} );
+
+		return matchedValue;
+	}
+
 	function patchAddressFieldDom( formId, fieldId, value, config, field ) {
 		var fieldConfig = getItemConfig( config, 'field', String( fieldId ) ) || {};
 		var addressFields = normalizeAddressFieldListValue( value, true );
@@ -2616,6 +2970,57 @@
 
 		replaceAddressFieldContainer( field, html );
 		patchRequiredAttributes( field, field.hasClass( 'gfield_contains_required' ) );
+	}
+
+	function patchAddressFieldDefaultValuesDom( formId, fieldId, value, field ) {
+		var inputBaseId = getAddressFieldBaseInputId( formId, fieldId );
+		var addressDefaultValues = normalizeTimeDefaultValueList( value );
+
+		$.each( [ '1', '2', '3', '4', '5', '6' ], function( index, suffix ) {
+			var nextValue = getAddressDefaultValueBySuffix( addressDefaultValues, suffix );
+			var input = field.find( '#' + inputBaseId + '_' + suffix ).first();
+			var normalizedDefaultValue;
+
+			if ( ! nextValue || ! input.length ) {
+				return;
+			}
+
+			normalizedDefaultValue = String( nextValue.defaultValue || '' );
+
+			if ( input.is( 'select' ) ) {
+				input.val( normalizedDefaultValue );
+				return;
+			}
+
+			input.attr( 'value', normalizedDefaultValue );
+			input.val( normalizedDefaultValue );
+		} );
+	}
+
+	function patchAddressDefaultCountryDom( formId, fieldId, value, oldValue, config, field ) {
+		var fieldConfig = getItemConfig( config, 'field', String( fieldId ) ) || {};
+		var explicitCountryDefault = getAddressDefaultValueBySuffix( normalizeTimeDefaultValueList( fieldConfig && fieldConfig.values ? fieldConfig.values.default_value : [] ), '6' );
+		var input = field.find( '#' + getAddressFieldBaseInputId( formId, fieldId ) + '_6' ).first();
+		var normalizedValue = String( value || '' );
+		var previousValue = String( oldValue || '' );
+
+		if ( ! input.length || ( explicitCountryDefault && String( explicitCountryDefault.defaultValue || '' ) ) ) {
+			return;
+		}
+
+		if ( input.is( 'select' ) ) {
+			if ( ! input.val() || String( input.val() ) === previousValue ) {
+				input.val( normalizedValue );
+			}
+
+			return;
+		}
+
+		input.attr( 'value', normalizedValue );
+
+		if ( ! input.val() || String( input.val() ) === previousValue ) {
+			input.val( normalizedValue );
+		}
 	}
 
 	function captureAddressFieldState( field, formId, fieldId, fieldConfig ) {
@@ -3410,12 +3815,28 @@
 				break;
 
 			case 'default_value':
+				if ( isTimeFieldConfig( fieldConfig ) && $.isArray( value ) ) {
+					patchTimeFieldDefaultValuesDom( formId, fieldId, value, oldValue, field );
+					break;
+				}
+
+				if ( isAddressFieldConfig( fieldConfig ) && $.isArray( value ) ) {
+					patchAddressFieldDefaultValuesDom( formId, fieldId, value, field );
+					break;
+				}
+
 				input = field.find( 'input:not([type="hidden"]):not([type="radio"]):not([type="checkbox"]), textarea' ).first();
 				if ( input.length ) {
 					input.attr( 'value', value );
 					if ( ! input.val() || String( input.val() ) === String( oldValue || '' ) ) {
 						input.val( value );
 					}
+				}
+				break;
+
+			case 'default_country':
+				if ( isAddressFieldConfig( fieldConfig ) ) {
+					patchAddressDefaultCountryDom( formId, fieldId, value, oldValue, config, field );
 				}
 				break;
 

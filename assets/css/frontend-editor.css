@@ -271,6 +271,7 @@ fieldset.ffe-editable-field[data-ffe-email-confirm-live-disabled="1"] > legend.g
 .ffe-editor-panel__control {
 	display: flex;
 	flex-direction: column;
+	flex-shrink: 0;
 	gap: 0.5rem;
 	margin: 0;
 }
@@ -482,6 +483,16 @@ fieldset.ffe-editable-field[data-ffe-email-confirm-live-disabled="1"] > legend.g
 }
 
 .ffe-editor-panel__control--time-sub-labels {
+	gap: 0.75rem;
+	min-height: 0;
+}
+
+.ffe-editor-panel__control--time-default-values {
+	gap: 0.75rem;
+	min-height: 0;
+}
+
+.ffe-editor-panel__control--address-default-values {
 	gap: 0.75rem;
 	min-height: 0;
 }
