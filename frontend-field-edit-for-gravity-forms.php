@@ -3,7 +3,7 @@
  * Plugin Name: Frontend Field Edit for Gravity Forms
  * Plugin URI: https://github.com/guilamu/frontend-field-edit-for-gf
  * Description: Lets trusted users edit safe Gravity Forms field settings from the frontend.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Guilamu
  * Author URI: https://github.com/guilamu
  * Text Domain: frontend-field-edit-for-gf
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FFE_GF_VERSION', '1.0.1' );
+define( 'FFE_GF_VERSION', '1.0.2' );
 define( 'FFE_GF_PLUGIN_FILE', __FILE__ );
 define( 'FFE_GF_PLUGIN_SLUG', 'frontend-field-edit-for-gf' );
 define( 'FFE_GF_PLUGIN_NAME', 'Frontend Field Edit for Gravity Forms' );

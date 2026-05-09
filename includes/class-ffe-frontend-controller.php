@@ -41,6 +41,7 @@ class FFE_Frontend_Controller {
 
 		wp_enqueue_script( 'ffe_frontend_editor' );
 		wp_enqueue_style( 'ffe_frontend_editor' );
+		$this->maybe_enqueue_datepicker_assets( $form, rgar( $context, 'settings', array() ) );
 
 		$this->frontend_data[ (string) $form_id ] = array(
 			'formId'                => $form_id,
@@ -85,6 +86,7 @@ class FFE_Frontend_Controller {
 				'id'                => absint( $field_id ),
 				'type'              => rgar( $field, 'type' ),
 				'inputType'         => $this->get_field_input_type( $field ),
+				'dateConfig'        => $this->get_date_field_config( $field ),
 				'addressType'       => $this->get_address_type_key( $field ),
 				'addressConfig'     => $this->get_address_field_config( $field ),
 				'choiceLimit'       => (string) $this->get_field_property( $field, 'choiceLimit' ),
@@ -98,6 +100,41 @@ class FFE_Frontend_Controller {
 		}
 
 		return $payload;
+	}
+
+	private function maybe_enqueue_datepicker_assets( $form, $allowed_fields ) {
+		if ( ! $this->has_editable_date_default_field( $form, $allowed_fields ) ) {
+			return;
+		}
+
+		if ( wp_script_is( 'gform_datepicker_init', 'registered' ) ) {
+			wp_enqueue_script( 'gform_datepicker_init' );
+		}
+
+		if ( wp_style_is( 'gforms_datepicker_css', 'registered' ) ) {
+			wp_enqueue_style( 'gforms_datepicker_css' );
+		}
+	}
+
+	private function has_editable_date_default_field( $form, $allowed_fields ) {
+		if ( empty( $form['fields'] ) || ! is_array( $form['fields'] ) || ! is_array( $allowed_fields ) ) {
+			return false;
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			$field_id       = (string) rgar( $field, 'id' );
+			$field_settings = isset( $allowed_fields[ $field_id ]['settings'] ) && is_array( $allowed_fields[ $field_id ]['settings'] ) ? $allowed_fields[ $field_id ]['settings'] : array();
+
+			if ( empty( $field_settings ) || ! in_array( FFE_Config_Resolver::SETTING_DEFAULT_VALUE, $field_settings, true ) ) {
+				continue;
+			}
+
+			if ( $this->is_date_field( $field ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function build_form_item_payload( $form, $allowed_items ) {
@@ -264,6 +301,22 @@ class FFE_Frontend_Controller {
 			'fixedCountry'   => (string) rgar( $address_type_config, 'country' ),
 			'stateOptions'   => is_array( $state_options ) ? array_values( $state_options ) : array(),
 			'countryOptions' => $this->get_address_country_options(),
+		);
+	}
+
+	private function get_date_field_config( $field ) {
+		if ( ! $this->is_date_field( $field ) ) {
+			return array();
+		}
+
+		$date_type          = (string) $this->get_field_property( $field, 'dateType' );
+		$date_format        = (string) $this->get_field_property( $field, 'dateFormat' );
+		$calendar_icon_type = (string) $this->get_field_property( $field, 'calendarIconType' );
+
+		return array(
+			'dateType'         => '' !== $date_type ? $date_type : 'datepicker',
+			'dateFormat'       => '' !== $date_format ? $date_format : 'mdy',
+			'calendarIconType' => '' !== $calendar_icon_type ? $calendar_icon_type : 'none',
 		);
 	}
 
@@ -575,6 +628,10 @@ class FFE_Frontend_Controller {
 
 	private function is_time_field( $field ) {
 		return 'time' === $this->get_field_input_type( $field );
+	}
+
+	private function is_date_field( $field ) {
+		return 'date' === $this->get_field_input_type( $field );
 	}
 
 	private function is_address_field( $field ) {

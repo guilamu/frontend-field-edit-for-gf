@@ -159,6 +159,10 @@ fieldset.ffe-editable-field[data-ffe-email-confirm-live-disabled="1"] > legend.g
 	transform: translateX(0);
 }
 
+body #ui-datepicker-div[style] {
+	z-index: 100000 !important;
+}
+
 .ffe-editor-panel__header {
 	align-items: flex-start;
 	background: #fff;

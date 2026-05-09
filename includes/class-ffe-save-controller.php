@@ -417,6 +417,7 @@ class FFE_Save_Controller {
 			'id'                => absint( $this->get_field_property( $field, 'id' ) ),
 			'type'              => (string) $this->get_field_property( $field, 'type' ),
 			'inputType'         => $this->get_field_input_type( $field ),
+			'dateConfig'        => $this->get_date_field_config( $field ),
 			'addressType'       => $this->get_address_type_key( $field ),
 			'addressConfig'     => $this->get_address_field_config( $field ),
 			'choiceLimit'       => (string) $this->get_field_property( $field, 'choiceLimit' ),
@@ -543,6 +544,22 @@ class FFE_Save_Controller {
 
 	private function get_time_format( $field ) {
 		return '24' === (string) $this->get_field_property( $field, 'timeFormat' ) ? '24' : '12';
+	}
+
+	private function get_date_field_config( $field ) {
+		if ( ! $this->is_date_field( $field ) ) {
+			return array();
+		}
+
+		$date_type          = (string) $this->get_field_property( $field, 'dateType' );
+		$date_format        = (string) $this->get_field_property( $field, 'dateFormat' );
+		$calendar_icon_type = (string) $this->get_field_property( $field, 'calendarIconType' );
+
+		return array(
+			'dateType'         => '' !== $date_type ? $date_type : 'datepicker',
+			'dateFormat'       => '' !== $date_format ? $date_format : 'mdy',
+			'calendarIconType' => '' !== $calendar_icon_type ? $calendar_icon_type : 'none',
+		);
 	}
 
 	private function get_address_field_config( $field ) {
@@ -1113,6 +1130,10 @@ class FFE_Save_Controller {
 
 	private function is_time_field( $field ) {
 		return 'time' === $this->get_field_input_type( $field );
+	}
+
+	private function is_date_field( $field ) {
+		return 'date' === $this->get_field_input_type( $field );
 	}
 
 	private function is_address_field( $field ) {

@@ -111,6 +111,12 @@ When you publish releases on GitHub, WordPress can detect new versions through t
 
 ## Changelog
 
+### 1.0.2 - 2026-05-09
+
+- **Improved:** Added the native Gravity Forms datepicker to Date field default value editing in the frontend panel.
+- **Fixed:** Date field default values now follow the field's configured date format while still saving in a validated canonical format.
+- **Fixed:** The frontend editor datepicker popup now opens in the correct position inside the fixed sidebar.
+
 ### 1.0.1 - 2026-05-07
 
 - **Improved:** Added frontend editing for Time field per-input default values and live preview updates without a full page refresh.

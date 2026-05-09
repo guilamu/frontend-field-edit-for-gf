@@ -467,7 +467,7 @@
 		} );
 	}
 
-	function buildFieldControls( fieldConfig ) {
+	function buildFieldControls( fieldConfig, formId ) {
 		var html = '';
 		var orderedSettings = getOrderedSettings( fieldConfig );
 
@@ -477,6 +477,7 @@
 			var isTimeFormat = isTimeFormatSetting( settingKey );
 			var isTimeSubLabels = isTimeSubLabelsSetting( settingKey );
 			var isTimeDefaultValues = settingKey === 'default_value' && isTimeFieldConfig( fieldConfig );
+			var isDateDefaultValue = settingKey === 'default_value' && isDateFieldConfig( fieldConfig );
 			var isAddressDefaultValues = settingKey === 'default_value' && isAddressFieldConfig( fieldConfig );
 			var isAddressDefaultCountry = isAddressDefaultCountrySetting( settingKey ) && isAddressFieldConfig( fieldConfig );
 			var isAddressFields = isAddressFieldsSetting( settingKey );
@@ -530,6 +531,11 @@
 
 			if ( isTimeDefaultValues ) {
 				html += buildTimeDefaultValuesControl( fieldConfig, controlId, value );
+				return;
+			}
+
+			if ( isDateDefaultValue ) {
+				html += buildDateDefaultValueControl( fieldConfig, formId, controlId, value );
 				return;
 			}
 
@@ -638,6 +644,24 @@
 		} );
 
 		html += '</div>';
+		html += '</div>';
+
+		return html;
+	}
+
+	function buildDateDefaultValueControl( fieldConfig, formId, controlId, value ) {
+		var html = '';
+		var dateFieldConfig = getDateFieldConfig( fieldConfig );
+		var themeAttributes = getDateControlThemeAttributes( formId );
+		var inputId = 'input_' + String( formId ) + '_' + String( fieldConfig && fieldConfig.id != null ? fieldConfig.id : 'field' ) + '_ffe_default';
+		var wrapperId = 'gform_wrapper_' + String( formId ) + '_ffe_date_default_' + String( fieldConfig && fieldConfig.id != null ? fieldConfig.id : 'field' );
+
+		html += '<div class="ffe-editor-panel__control ffe-editor-panel__control--date-default-value" data-setting-key="default_value" data-control-id="' + escapeHtml( controlId ) + '" data-date-format="' + escapeHtml( dateFieldConfig.dateFormat ) + '" data-date-type="' + escapeHtml( dateFieldConfig.dateType ) + '">';
+		html += '<label class="ffe-editor-panel__control-label" for="' + escapeHtml( inputId ) + '">' + escapeHtml( humanizeSetting( 'default_value' ) ) + '</label>';
+		html += '<div class="ffe-editor-panel__date-default-value-theme gform_wrapper" id="' + escapeHtml( wrapperId ) + '" data-form-theme="' + escapeHtml( themeAttributes.formTheme ) + '"' + ( themeAttributes.formIndex !== '' ? ' data-form-index="' + escapeHtml( themeAttributes.formIndex ) + '"' : '' ) + '>';
+		html += '<input type="text" id="' + escapeHtml( inputId ) + '" class="ffe-date-default-value-input datepicker gform-datepicker ' + escapeHtml( dateFieldConfig.dateFormat ) + ' datepicker_no_icon gdatepicker-no-icon" value="' + escapeHtml( formatDateValueForDisplay( value, dateFieldConfig.dateFormat ) ) + '" placeholder="' + escapeHtml( getDatePlaceholderText( dateFieldConfig.dateFormat ) ) + '" autocomplete="off" />';
+		html += '</div>';
+		html += '<input type="hidden" class="ffe-date-default-value-canonical" value="' + escapeHtml( normalizeSettingValue( 'default_value', value ) ) + '" />';
 		html += '</div>';
 
 		return html;
@@ -1011,11 +1035,182 @@
 		return fieldType === 'time' || inputType === 'time';
 	}
 
+	function isDateFieldConfig( fieldConfig ) {
+		var fieldType = String( fieldConfig && fieldConfig.type ? fieldConfig.type : '' );
+		var inputType = String( fieldConfig && fieldConfig.inputType ? fieldConfig.inputType : '' );
+
+		return fieldType === 'date' || inputType === 'date';
+	}
+
 	function isAddressFieldConfig( fieldConfig ) {
 		var fieldType = String( fieldConfig && fieldConfig.type ? fieldConfig.type : '' );
 		var inputType = String( fieldConfig && fieldConfig.inputType ? fieldConfig.inputType : '' );
 
 		return fieldType === 'address' || inputType === 'address';
+	}
+
+	function getDateFieldConfig( fieldConfig ) {
+		var dateConfig = $.isPlainObject( fieldConfig && fieldConfig.dateConfig ) ? fieldConfig.dateConfig : {};
+
+		return {
+			dateType: getDateFieldTypeKey( dateConfig.dateType ),
+			dateFormat: getDateFieldFormatKey( dateConfig.dateFormat )
+		};
+	}
+
+	function getDateFieldTypeKey( dateType ) {
+		dateType = String( dateType || '' );
+
+		if ( dateType === 'datefield' || dateType === 'datedropdown' ) {
+			return dateType;
+		}
+
+		return 'datepicker';
+	}
+
+	function getDateFieldFormatKey( dateFormat ) {
+		dateFormat = String( dateFormat || '' );
+
+		switch ( dateFormat ) {
+			case 'dmy':
+			case 'dmy_dash':
+			case 'dmy_dot':
+			case 'ymd_slash':
+			case 'ymd_dash':
+			case 'ymd_dot':
+				return dateFormat;
+
+			default:
+				return 'mdy';
+		}
+	}
+
+	function getDatepickerDisplayFormat( dateFormatKey ) {
+		switch ( getDateFieldFormatKey( dateFormatKey ) ) {
+			case 'dmy':
+				return 'dd/mm/yy';
+
+			case 'dmy_dash':
+				return 'dd-mm-yy';
+
+			case 'dmy_dot':
+				return 'dd.mm.yy';
+
+			case 'ymd_slash':
+				return 'yy/mm/dd';
+
+			case 'ymd_dash':
+				return 'yy-mm-dd';
+
+			case 'ymd_dot':
+				return 'yy.mm.dd';
+
+			default:
+				return 'mm/dd/yy';
+		}
+	}
+
+	function getDatePlaceholderText( dateFormatKey ) {
+		switch ( getDateFieldFormatKey( dateFormatKey ) ) {
+			case 'dmy':
+				return 'dd/mm/yyyy';
+
+			case 'dmy_dash':
+				return 'dd-mm-yyyy';
+
+			case 'dmy_dot':
+				return 'dd.mm.yyyy';
+
+			case 'ymd_slash':
+				return 'yyyy/mm/dd';
+
+			case 'ymd_dash':
+				return 'yyyy-mm-dd';
+
+			case 'ymd_dot':
+				return 'yyyy.mm.dd';
+
+			default:
+				return 'mm/dd/yyyy';
+		}
+	}
+
+	function getDateControlThemeAttributes( formId ) {
+		var wrapper = getFormWrapper( formId );
+
+		return {
+			formTheme: String( wrapper.attr( 'data-form-theme' ) || 'gravity-theme' ),
+			formIndex: String( wrapper.attr( 'data-form-index' ) || '' )
+		};
+	}
+
+	function parseCanonicalDateValue( value ) {
+		var normalizedValue = normalizeSettingValue( 'default_value', value );
+		var matches;
+		var dateObject;
+
+		if ( normalizedValue === '' ) {
+			return null;
+		}
+
+		if ( $.datepicker && typeof $.datepicker.parseDate === 'function' ) {
+			try {
+				return $.datepicker.parseDate( 'yy-mm-dd', normalizedValue );
+			} catch ( error ) {
+				return null;
+			}
+		}
+
+		matches = normalizedValue.match( /^(\d{4})-(\d{2})-(\d{2})$/ );
+
+		if ( ! matches ) {
+			return null;
+		}
+
+		dateObject = new Date( Number( matches[ 1 ] ), Number( matches[ 2 ] ) - 1, Number( matches[ 3 ] ) );
+
+		if ( dateObject.getFullYear() !== Number( matches[ 1 ] ) || dateObject.getMonth() !== Number( matches[ 2 ] ) - 1 || dateObject.getDate() !== Number( matches[ 3 ] ) ) {
+			return null;
+		}
+
+		return dateObject;
+	}
+
+	function formatCanonicalDateValue( dateObject ) {
+		if ( ! dateObject ) {
+			return '';
+		}
+
+		if ( $.datepicker && typeof $.datepicker.formatDate === 'function' ) {
+			return $.datepicker.formatDate( 'yy-mm-dd', dateObject );
+		}
+
+		return String( dateObject.getFullYear() ) + '-' + padDateNumber( dateObject.getMonth() + 1 ) + '-' + padDateNumber( dateObject.getDate() );
+	}
+
+	function formatDateValueForDisplay( value, dateFormatKey ) {
+		var normalizedValue = normalizeSettingValue( 'default_value', value );
+		var parsedDate = parseCanonicalDateValue( normalizedValue );
+
+		if ( normalizedValue === '' ) {
+			return '';
+		}
+
+		if ( ! parsedDate || ! $.datepicker || typeof $.datepicker.formatDate !== 'function' ) {
+			return normalizedValue;
+		}
+
+		return $.datepicker.formatDate( getDatepickerDisplayFormat( dateFormatKey ), parsedDate );
+	}
+
+	function padDateNumber( value ) {
+		value = parseInt( value, 10 );
+
+		if ( isNaN( value ) ) {
+			return '';
+		}
+
+		return value < 10 ? '0' + value : String( value );
 	}
 
 	function normalizeChoiceListValue( value ) {
@@ -1239,6 +1434,10 @@
 			return getTimeDefaultValuesControlValue( control );
 		}
 
+		if ( settingKey === 'default_value' && control.hasClass( 'ffe-editor-panel__control--date-default-value' ) ) {
+			return getDateDefaultValueControlValue( control );
+		}
+
 		if ( settingKey === 'default_value' && control.hasClass( 'ffe-editor-panel__control--address-default-values' ) ) {
 			return getAddressDefaultValuesControlValue( control );
 		}
@@ -1328,6 +1527,19 @@
 		} );
 
 		return timeDefaultValues;
+	}
+
+	function getDateDefaultValueControlValue( control ) {
+		var hiddenInput;
+
+		syncDateDefaultValueCanonical( control );
+		hiddenInput = control.find( '.ffe-date-default-value-canonical' ).first();
+
+		if ( hiddenInput.length ) {
+			return String( hiddenInput.val() || '' );
+		}
+
+		return String( control.find( '.ffe-date-default-value-input' ).first().val() || '' );
 	}
 
 	function getAddressDefaultValuesControlValue( control ) {
@@ -1467,7 +1679,7 @@
 
 		panel.find( '.ffe-editor-panel__title' ).text( title );
 		panel.find( '.ffe-editor-panel__subtitle' ).text( subtitle );
-		panel.find( '.ffe-editor-panel__body' ).html( buildFieldControls( itemConfig ) );
+		panel.find( '.ffe-editor-panel__body' ).html( buildFieldControls( itemConfig, formId ) );
 		initializeAutogrowControls( panel );
 		initializeChoiceControls( panel );
 		initializeNameFieldsControls( panel );
@@ -1477,6 +1689,20 @@
 		updatePanelNavigationButtons( formId, panel );
 		panel.attr( 'aria-hidden', 'false' ).addClass( 'is-open' );
 		focusFirstEditableControl( panel );
+		deferDateDefaultValueControlsInitialization( panel, formId );
+	}
+
+	function deferDateDefaultValueControlsInitialization( panel, formId ) {
+		var initialize = function() {
+			initializeDateDefaultValueControls( panel, formId );
+		};
+
+		if ( window.requestAnimationFrame ) {
+			window.requestAnimationFrame( initialize );
+			return;
+		}
+
+		window.setTimeout( initialize, 0 );
 	}
 
 	function initializeAutogrowControls( panel ) {
@@ -1524,6 +1750,198 @@
 		} );
 
 		updateTimeDefaultValueControlState( panel );
+	}
+
+	function initializeDateDefaultValueControls( panel, formId ) {
+		panel.off( 'change.ffeDateDefaultValue input.ffeDateDefaultValue', '.ffe-editor-panel__control--date-default-value .ffe-date-default-value-input' );
+		panel.on( 'change.ffeDateDefaultValue input.ffeDateDefaultValue', '.ffe-editor-panel__control--date-default-value .ffe-date-default-value-input', function() {
+			syncDateDefaultValueCanonical( $( this ).closest( '.ffe-editor-panel__control--date-default-value' ) );
+		} );
+
+		panel.find( '.ffe-editor-panel__control--date-default-value' ).each( function() {
+			initializeDateDefaultValueControl( $( this ), formId );
+		} );
+	}
+
+	function initializeDateDefaultValueControl( control, formId ) {
+		var input = control.find( '.ffe-date-default-value-input' ).first();
+		var hiddenInput = control.find( '.ffe-date-default-value-canonical' ).first();
+		var wrapper = control.find( '.gform_wrapper' ).first();
+		var themeAttributes = getDateControlThemeAttributes( formId );
+		var dateFormatKey = getDateFieldFormatKey( control.data( 'dateFormat' ) );
+		var canonicalValue = String( hiddenInput.val() || '' );
+		var parsedDate = parseCanonicalDateValue( canonicalValue );
+
+		if ( ! input.length || ! hiddenInput.length ) {
+			return;
+		}
+
+		if ( wrapper.length ) {
+			wrapper.attr( 'data-form-theme', themeAttributes.formTheme );
+
+			if ( themeAttributes.formIndex !== '' ) {
+				wrapper.attr( 'data-form-index', themeAttributes.formIndex );
+			}
+		}
+
+		if ( typeof window.gformInitSingleDatepicker === 'function' && $.fn.datepicker ) {
+			window.gformInitSingleDatepicker( input );
+			input.addClass( 'initialized' );
+			bindDateDefaultValuePickerPositioning( input );
+			input.datepicker( 'option', {
+				altField: hiddenInput,
+				altFormat: 'yy-mm-dd'
+			} );
+
+			if ( parsedDate ) {
+				input.datepicker( 'setDate', parsedDate );
+			} else if ( canonicalValue === '' ) {
+				input.val( '' );
+			} else {
+				input.val( formatDateValueForDisplay( canonicalValue, dateFormatKey ) );
+			}
+		} else {
+			input.val( formatDateValueForDisplay( canonicalValue, dateFormatKey ) );
+		}
+
+		syncDateDefaultValueCanonical( control );
+	}
+
+	function bindDateDefaultValuePickerPositioning( input ) {
+		var originalBeforeShow;
+		var originalOnClose;
+		var originalOnChangeMonthYear;
+
+		if ( ! input.length || ! $.fn.datepicker || ! input.data( 'datepicker' ) ) {
+			return;
+		}
+
+		originalBeforeShow = input.datepicker( 'option', 'beforeShow' );
+		originalOnClose = input.datepicker( 'option', 'onClose' );
+		originalOnChangeMonthYear = input.datepicker( 'option', 'onChangeMonthYear' );
+
+		input.datepicker( 'option', {
+			beforeShow: function( inputElement, inst ) {
+				var result = $.isFunction( originalBeforeShow ) ? originalBeforeShow.call( this, inputElement, inst ) : undefined;
+
+				window.setTimeout( function() {
+					positionDateDefaultValuePicker( $( inputElement ), inst );
+				}, 0 );
+
+				return result;
+			},
+			onClose: function( dateText, inst ) {
+				resetDateDefaultValuePickerPosition( inst );
+
+				if ( $.isFunction( originalOnClose ) ) {
+					originalOnClose.call( this, dateText, inst );
+				}
+			},
+			onChangeMonthYear: function( year, month, inst ) {
+				if ( $.isFunction( originalOnChangeMonthYear ) ) {
+					originalOnChangeMonthYear.call( this, year, month, inst );
+				}
+
+				window.setTimeout( function() {
+					positionDateDefaultValuePicker( input, inst );
+				}, 0 );
+			}
+		} );
+
+		input.off( '.ffeDateDefaultPickerPosition' );
+		input.on( 'focus.ffeDateDefaultPickerPosition click.ffeDateDefaultPickerPosition', function() {
+			window.setTimeout( function() {
+				positionDateDefaultValuePicker( input );
+			}, 0 );
+		} );
+	}
+
+	function positionDateDefaultValuePicker( input, inst ) {
+		var picker = inst && inst.dpDiv ? $( inst.dpDiv ) : $( '#ui-datepicker-div' );
+		var rect;
+		var pickerWidth;
+		var pickerHeight;
+		var viewportWidth;
+		var viewportHeight;
+		var margin = 8;
+		var top;
+		var left;
+
+		if ( ! input.length || ! picker.length || ! picker.is( ':visible' ) ) {
+			return;
+		}
+
+		rect = input[ 0 ].getBoundingClientRect();
+		pickerWidth = picker.outerWidth();
+		pickerHeight = picker.outerHeight();
+		viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+		viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+		left = rect.left;
+		top = rect.bottom + margin;
+
+		if ( left + pickerWidth > viewportWidth - margin ) {
+			left = Math.max( margin, viewportWidth - pickerWidth - margin );
+		}
+
+		if ( top + pickerHeight > viewportHeight - margin && rect.top - pickerHeight - margin >= margin ) {
+			top = rect.top - pickerHeight - margin;
+		}
+
+		picker.css( {
+			position: 'fixed',
+			top: Math.max( margin, Math.round( top ) ) + 'px',
+			left: Math.max( margin, Math.round( left ) ) + 'px',
+			right: 'auto',
+			bottom: 'auto'
+		} );
+	}
+
+	function resetDateDefaultValuePickerPosition( inst ) {
+		var picker = inst && inst.dpDiv ? $( inst.dpDiv ) : $( '#ui-datepicker-div' );
+
+		if ( ! picker.length ) {
+			return;
+		}
+
+		picker.css( {
+			position: '',
+			top: '',
+			left: '',
+			right: '',
+			bottom: ''
+		} );
+	}
+
+	function syncDateDefaultValueCanonical( control ) {
+		var input = control.find( '.ffe-date-default-value-input' ).first();
+		var hiddenInput = control.find( '.ffe-date-default-value-canonical' ).first();
+		var dateFormatKey = getDateFieldFormatKey( control.data( 'dateFormat' ) );
+		var rawValue = String( input.val() || '' );
+		var parsedDate = null;
+
+		if ( ! input.length || ! hiddenInput.length ) {
+			return;
+		}
+
+		if ( rawValue === '' ) {
+			hiddenInput.val( '' );
+			return;
+		}
+
+		if ( $.datepicker && typeof $.datepicker.parseDate === 'function' ) {
+			try {
+				parsedDate = $.datepicker.parseDate( getDatepickerDisplayFormat( dateFormatKey ), rawValue );
+			} catch ( error ) {
+				parsedDate = null;
+			}
+		}
+
+		if ( parsedDate ) {
+			hiddenInput.val( formatCanonicalDateValue( parsedDate ) );
+			return;
+		}
+
+		hiddenInput.val( rawValue );
 	}
 
 	function updateTimeDefaultValueControlState( panel ) {
@@ -2142,7 +2560,7 @@
 	}
 
 	function shouldPatchAfterScopedRerender( settingKey ) {
-		return settingKey === 'default_country';
+		return settingKey === 'default_country' || settingKey === 'default_value';
 	}
 
 	function captureFieldInputState( field ) {
@@ -2703,6 +3121,112 @@
 		} );
 
 		field.data( 'ffeTimeFieldState', timeState );
+	}
+
+	function patchDateFieldDefaultValueDom( formId, fieldId, value, oldValue, fieldConfig, field ) {
+		var dateFieldConfig = getDateFieldConfig( fieldConfig );
+		var displayValue = formatDateValueForDisplay( value, dateFieldConfig.dateFormat );
+		var previousDisplayValue = formatDateValueForDisplay( oldValue, dateFieldConfig.dateFormat );
+		var parsedDate = parseCanonicalDateValue( value );
+		var previousDate = parseCanonicalDateValue( oldValue );
+		var primaryInput = field.find( '.gform-datepicker' ).first();
+		var monthControl = field.find( '.gfield_date_month :input, .gfield_date_dropdown_month :input' ).first();
+		var dayControl = field.find( '.gfield_date_day :input, .gfield_date_dropdown_day :input' ).first();
+		var yearControl = field.find( '.gfield_date_year :input, .gfield_date_dropdown_year :input' ).first();
+		var monthValue = parsedDate ? String( parsedDate.getMonth() + 1 ) : '';
+		var dayValue = parsedDate ? String( parsedDate.getDate() ) : '';
+		var yearValue = parsedDate ? String( parsedDate.getFullYear() ) : '';
+		var previousMonthValue = previousDate ? String( previousDate.getMonth() + 1 ) : '';
+		var previousDayValue = previousDate ? String( previousDate.getDate() ) : '';
+		var previousYearValue = previousDate ? String( previousDate.getFullYear() ) : '';
+
+		if ( primaryInput.length || dateFieldConfig.dateType === 'datepicker' ) {
+			updateLiveFieldValueIfUnchanged( primaryInput.length ? primaryInput : field.find( 'input:not([type="hidden"])' ).first(), displayValue, [ previousDisplayValue, normalizeSettingValue( 'default_value', oldValue ) ] );
+			return;
+		}
+
+		updateDatePartControlValue( monthControl, monthValue, previousMonthValue );
+		updateDatePartControlValue( dayControl, dayValue, previousDayValue );
+		updateDatePartControlValue( yearControl, yearValue, previousYearValue );
+	}
+
+	function updateDatePartControlValue( control, value, oldValue ) {
+		var normalizedValue;
+		var normalizedOldValue;
+		var currentValue;
+
+		if ( ! control || ! control.length ) {
+			return;
+		}
+
+		normalizedValue = normalizeDatePartControlValue( control, value );
+		normalizedOldValue = normalizeDatePartControlValue( control, oldValue );
+		currentValue = String( control.val() || '' );
+
+		if ( control.is( 'select' ) ) {
+			if ( currentValue === '' || currentValue === normalizedOldValue ) {
+				control.val( normalizedValue );
+			}
+			return;
+		}
+
+		updateLiveFieldValueIfUnchanged( control, normalizedValue, [ normalizedOldValue ] );
+	}
+
+	function normalizeDatePartControlValue( control, value ) {
+		var normalizedValue = value == null ? '' : String( value );
+		var paddedValue;
+		var unpaddedValue;
+
+		if ( ! control || ! control.length || ! control.is( 'select' ) || normalizedValue === '' ) {
+			return normalizedValue;
+		}
+
+		if ( control.find( 'option[value="' + normalizedValue + '"]' ).length ) {
+			return normalizedValue;
+		}
+
+		if ( normalizedValue.length === 1 ) {
+			paddedValue = '0' + normalizedValue;
+
+			if ( control.find( 'option[value="' + paddedValue + '"]' ).length ) {
+				return paddedValue;
+			}
+		}
+
+		if ( normalizedValue.length === 2 && normalizedValue.charAt( 0 ) === '0' ) {
+			unpaddedValue = String( parseInt( normalizedValue, 10 ) );
+
+			if ( unpaddedValue !== 'NaN' && control.find( 'option[value="' + unpaddedValue + '"]' ).length ) {
+				return unpaddedValue;
+			}
+		}
+
+		return normalizedValue;
+	}
+
+	function updateLiveFieldValueIfUnchanged( control, value, oldValueCandidates ) {
+		var currentValue;
+		var normalizedValue;
+		var candidates;
+
+		if ( ! control || ! control.length ) {
+			return;
+		}
+
+		currentValue = String( control.val() || '' );
+		normalizedValue = value == null ? '' : String( value );
+		candidates = $.grep( $.map( $.isArray( oldValueCandidates ) ? oldValueCandidates : [ oldValueCandidates ], function( candidate ) {
+			return candidate == null ? null : String( candidate );
+		} ), function( candidate ) {
+			return candidate !== null;
+		} );
+
+		control.attr( 'value', normalizedValue );
+
+		if ( currentValue === '' || $.inArray( currentValue, candidates ) !== -1 ) {
+			control.val( normalizedValue );
+		}
 	}
 
 	function captureTimeFieldState( field, formId, fieldId ) {
@@ -3817,6 +4341,11 @@
 			case 'default_value':
 				if ( isTimeFieldConfig( fieldConfig ) && $.isArray( value ) ) {
 					patchTimeFieldDefaultValuesDom( formId, fieldId, value, oldValue, field );
+					break;
+				}
+
+				if ( isDateFieldConfig( fieldConfig ) ) {
+					patchDateFieldDefaultValueDom( formId, fieldId, value, oldValue, fieldConfig, field );
 					break;
 				}
 
