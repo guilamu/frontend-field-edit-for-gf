@@ -111,6 +111,11 @@ When you publish releases on GitHub, WordPress can detect new versions through t
 
 ## Changelog
 
+### 1.0.4 - 2026-07-31
+
+- **Fixed:** Gravity Forms 3.0 compatibility — editing a field label no longer removes the `gform-field-label__text` wrapper that GF 3.0 renders around the label text, so labels keep their Orbital and 2.5 theme styling after an edit. Applies to plain labels, fieldset legends, and repeated edits.
+- **Fixed:** Gravity Forms 3.0 compatibility — the Consent field is rebuilt with the same checkbox label structure the form was rendered with, wrapping the label text on GF 3.0 and leaving it bare on GF 2.x.
+
 ### 1.0.3 - 2026-07-31
 
 - **Fixed:** Gravity Forms 3.0 compatibility — Date field default values are converted between the field's display format and the stored canonical format without jQuery UI, which GF 3.0 removed. Previously the editor showed the raw `yyyy-mm-dd` value and saved back whatever was typed, unconverted.

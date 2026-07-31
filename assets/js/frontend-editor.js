@@ -266,10 +266,35 @@
 		return field.children( 'legend.gfield_label' ).first();
 	}
 
+	/**
+	 * Write the label text into a label container without discarding the markup
+	 * Gravity Forms wrapped it in.
+	 *
+	 * GF 3.0 renders the label text inside its own
+	 * <span class="gform-field-label__text">, which the Orbital and 2.5 themes
+	 * style; replacing the container's whole HTML would drop that span and the
+	 * label would lose its styling after the first edit. GF 2.x has no wrapper,
+	 * so the text sits directly in the container alongside the required
+	 * indicator. Detecting the span on the rendered form is more reliable than
+	 * sniffing the Gravity Forms version, because only labels GF itself
+	 * rendered carry it.
+	 */
+	function writeLabelText( container, value ) {
+		var textWrapper = container.children( '.gform-field-label__text' ).first();
+		var requiredHtml;
+
+		if ( textWrapper.length ) {
+			textWrapper.html( value );
+			return;
+		}
+
+		requiredHtml = container.children( '.gfield_required' ).first().prop( 'outerHTML' ) || '';
+		container.html( value + requiredHtml );
+	}
+
 	function patchFieldLabelText( field, value ) {
 		var label = getPrimaryFieldLabelElement( field );
 		var labelCopy;
-		var requiredHtml;
 
 		if ( ! label.length ) {
 			return;
@@ -279,13 +304,11 @@
 
 		if ( labelCopy.length ) {
 			normalizeLegendLabelCopy( label, labelCopy, label.children( '.ffe-field-edit-actions' ).first() );
-			requiredHtml = labelCopy.children( '.gfield_required' ).first().prop( 'outerHTML' ) || '';
-			labelCopy.html( value + requiredHtml );
+			writeLabelText( labelCopy, value );
 			return;
 		}
 
-		requiredHtml = label.children( '.gfield_required' ).first().prop( 'outerHTML' ) || '';
-		label.html( value + requiredHtml );
+		writeLabelText( label, value );
 	}
 
 	function ensurePanel( formId, state ) {
@@ -4246,7 +4269,10 @@
 		var checkboxAriaInvalid = checkbox.attr( 'aria-invalid' ) || 'false';
 		var checkboxAriaRequired = isRequired ? 'true' : '';
 		var checkboxAriaDescribedby = getConsentAriaDescribedby( formId, fieldId, checkbox.attr( 'aria-describedby' ), descriptionValue );
-		var labelHtml = checkboxLabel;
+		// GF 3.0 wraps the consent checkbox label text in its own span; GF 2.x
+		// does not. Rebuild whichever shape the form was rendered with.
+		var usesLabelTextWrapper = consentContainer.find( 'label' ).first().children( '.gform-field-label__text' ).length > 0;
+		var labelHtml = usesLabelTextWrapper ? '<span class="gform-field-label__text">' + checkboxLabel + '</span>' : checkboxLabel;
 		var inputHtml;
 
 		if ( shouldUseConsentInlineRequiredIndicator( field, isRequired ) ) {
