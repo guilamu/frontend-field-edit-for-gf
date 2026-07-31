@@ -659,6 +659,11 @@
 		html += '<div class="ffe-editor-panel__control ffe-editor-panel__control--date-default-value" data-setting-key="default_value" data-control-id="' + escapeHtml( controlId ) + '" data-date-format="' + escapeHtml( dateFieldConfig.dateFormat ) + '" data-date-type="' + escapeHtml( dateFieldConfig.dateType ) + '">';
 		html += '<label class="ffe-editor-panel__control-label" for="' + escapeHtml( inputId ) + '">' + escapeHtml( humanizeSetting( 'default_value' ) ) + '</label>';
 		html += '<div class="ffe-editor-panel__date-default-value-theme gform_wrapper" id="' + escapeHtml( wrapperId ) + '" data-form-theme="' + escapeHtml( themeAttributes.formTheme ) + '"' + ( themeAttributes.formIndex !== '' ? ' data-form-index="' + escapeHtml( themeAttributes.formIndex ) + '"' : '' ) + '>';
+		// The "gform-datepicker" class plus the format key drive both datepicker
+		// generations: GF 2.x initialises it through gformInitSingleDatepicker(),
+		// and GF 3.0 picks it up on its own because its replacement library
+		// delegates a "focusin" listener for input.gform-datepicker on document,
+		// reading the display format from this same format class.
 		html += '<input type="text" id="' + escapeHtml( inputId ) + '" class="ffe-date-default-value-input datepicker gform-datepicker ' + escapeHtml( dateFieldConfig.dateFormat ) + ' datepicker_no_icon gdatepicker-no-icon" value="' + escapeHtml( formatDateValueForDisplay( value, dateFieldConfig.dateFormat ) ) + '" placeholder="' + escapeHtml( getDatePlaceholderText( dateFieldConfig.dateFormat ) ) + '" autocomplete="off" />';
 		html += '</div>';
 		html += '<input type="hidden" class="ffe-date-default-value-canonical" value="' + escapeHtml( normalizeSettingValue( 'default_value', value ) ) + '" />';
@@ -1085,30 +1090,108 @@
 		}
 	}
 
-	function getDatepickerDisplayFormat( dateFormatKey ) {
+	/**
+	 * Describe a Gravity Forms date format key as a part order and separator.
+	 *
+	 * Gravity Forms 3.0 replaced the jQuery UI datepicker with a non-jQuery
+	 * library, so $.datepicker.parseDate() / $.datepicker.formatDate() are no
+	 * longer available to translate between the canonical yyyy-mm-dd value and
+	 * the format configured on the field. These descriptors drive the
+	 * self-contained parser and formatter below, which work on every supported
+	 * Gravity Forms version and depend on no date library at all.
+	 */
+	function getDateFormatDescriptor( dateFormatKey ) {
 		switch ( getDateFieldFormatKey( dateFormatKey ) ) {
 			case 'dmy':
-				return 'dd/mm/yy';
+				return { order: [ 'd', 'm', 'y' ], separator: '/' };
 
 			case 'dmy_dash':
-				return 'dd-mm-yy';
+				return { order: [ 'd', 'm', 'y' ], separator: '-' };
 
 			case 'dmy_dot':
-				return 'dd.mm.yy';
+				return { order: [ 'd', 'm', 'y' ], separator: '.' };
 
 			case 'ymd_slash':
-				return 'yy/mm/dd';
+				return { order: [ 'y', 'm', 'd' ], separator: '/' };
 
 			case 'ymd_dash':
-				return 'yy-mm-dd';
+				return { order: [ 'y', 'm', 'd' ], separator: '-' };
 
 			case 'ymd_dot':
-				return 'yy.mm.dd';
+				return { order: [ 'y', 'm', 'd' ], separator: '.' };
 
 			default:
-				return 'mm/dd/yy';
+				return { order: [ 'm', 'd', 'y' ], separator: '/' };
 		}
 	}
+
+	/**
+	 * Build a Date from year/month/day numbers, rejecting out-of-range dates
+	 * that JavaScript would otherwise silently roll over (e.g. 2024-02-31).
+	 */
+	function buildValidatedDate( year, month, day ) {
+		var dateObject;
+
+		if ( isNaN( year ) || isNaN( month ) || isNaN( day ) ) {
+			return null;
+		}
+
+		dateObject = new Date( year, month - 1, day );
+
+		if ( dateObject.getFullYear() !== year || dateObject.getMonth() !== month - 1 || dateObject.getDate() !== day ) {
+			return null;
+		}
+
+		return dateObject;
+	}
+
+	/**
+	 * Parse a date string written in the format described by dateFormatKey.
+	 */
+	function parseDateWithFormatKey( rawValue, dateFormatKey ) {
+		var descriptor = getDateFormatDescriptor( dateFormatKey );
+		var parts = String( rawValue == null ? '' : rawValue ).split( descriptor.separator );
+		var values = {};
+
+		if ( parts.length !== 3 ) {
+			return null;
+		}
+
+		for ( var index = 0; index < descriptor.order.length; index++ ) {
+			if ( ! /^\d+$/.test( $.trim( parts[ index ] ) ) ) {
+				return null;
+			}
+
+			values[ descriptor.order[ index ] ] = parseInt( $.trim( parts[ index ] ), 10 );
+		}
+
+		return buildValidatedDate( values.y, values.m, values.d );
+	}
+
+	/**
+	 * Render a Date in the format described by dateFormatKey.
+	 */
+	function formatDateWithFormatKey( dateObject, dateFormatKey ) {
+		var descriptor = getDateFormatDescriptor( dateFormatKey );
+		var parts = [];
+
+		if ( ! dateObject ) {
+			return '';
+		}
+
+		$.each( descriptor.order, function( index, part ) {
+			if ( part === 'y' ) {
+				parts.push( String( dateObject.getFullYear() ) );
+			} else if ( part === 'm' ) {
+				parts.push( padDateNumber( dateObject.getMonth() + 1 ) );
+			} else {
+				parts.push( padDateNumber( dateObject.getDate() ) );
+			}
+		} );
+
+		return parts.join( descriptor.separator );
+	}
+
 
 	function getDatePlaceholderText( dateFormatKey ) {
 		switch ( getDateFieldFormatKey( dateFormatKey ) ) {
@@ -1153,25 +1236,13 @@
 			return null;
 		}
 
-		if ( $.datepicker && typeof $.datepicker.parseDate === 'function' ) {
-			try {
-				return $.datepicker.parseDate( 'yy-mm-dd', normalizedValue );
-			} catch ( error ) {
-				return null;
-			}
-		}
-
-		matches = normalizedValue.match( /^(\d{4})-(\d{2})-(\d{2})$/ );
+		matches = normalizedValue.match( /^(\d{4})-(\d{1,2})-(\d{1,2})$/ );
 
 		if ( ! matches ) {
 			return null;
 		}
 
-		dateObject = new Date( Number( matches[ 1 ] ), Number( matches[ 2 ] ) - 1, Number( matches[ 3 ] ) );
-
-		if ( dateObject.getFullYear() !== Number( matches[ 1 ] ) || dateObject.getMonth() !== Number( matches[ 2 ] ) - 1 || dateObject.getDate() !== Number( matches[ 3 ] ) ) {
-			return null;
-		}
+		dateObject = buildValidatedDate( Number( matches[ 1 ] ), Number( matches[ 2 ] ), Number( matches[ 3 ] ) );
 
 		return dateObject;
 	}
@@ -1179,10 +1250,6 @@
 	function formatCanonicalDateValue( dateObject ) {
 		if ( ! dateObject ) {
 			return '';
-		}
-
-		if ( $.datepicker && typeof $.datepicker.formatDate === 'function' ) {
-			return $.datepicker.formatDate( 'yy-mm-dd', dateObject );
 		}
 
 		return String( dateObject.getFullYear() ) + '-' + padDateNumber( dateObject.getMonth() + 1 ) + '-' + padDateNumber( dateObject.getDate() );
@@ -1196,11 +1263,11 @@
 			return '';
 		}
 
-		if ( ! parsedDate || ! $.datepicker || typeof $.datepicker.formatDate !== 'function' ) {
+		if ( ! parsedDate ) {
 			return normalizedValue;
 		}
 
-		return $.datepicker.formatDate( getDatepickerDisplayFormat( dateFormatKey ), parsedDate );
+		return formatDateWithFormatKey( parsedDate, dateFormatKey );
 	}
 
 	function padDateNumber( value ) {
@@ -1784,6 +1851,14 @@
 			}
 		}
 
+		// GF 2.x: initialise the jQuery UI datepicker and mirror the canonical
+		// value through altField, exactly as before.
+		//
+		// GF 3.0: gformInitSingleDatepicker() is a no-op stub and jQuery UI is
+		// gone, so this branch is skipped. Nothing needs to be initialised - the
+		// 3.0 datepicker delegates "focusin" for input.gform-datepicker on
+		// document and initialises the control itself the first time it is
+		// focused, including for markup injected after page load like this one.
 		if ( typeof window.gformInitSingleDatepicker === 'function' && $.fn.datepicker ) {
 			window.gformInitSingleDatepicker( input );
 			input.addClass( 'initialized' );
@@ -1795,14 +1870,12 @@
 
 			if ( parsedDate ) {
 				input.datepicker( 'setDate', parsedDate );
-			} else if ( canonicalValue === '' ) {
-				input.val( '' );
-			} else {
-				input.val( formatDateValueForDisplay( canonicalValue, dateFormatKey ) );
+
+				return syncDateDefaultValueCanonical( control );
 			}
-		} else {
-			input.val( formatDateValueForDisplay( canonicalValue, dateFormatKey ) );
 		}
+
+		input.val( canonicalValue === '' ? '' : formatDateValueForDisplay( canonicalValue, dateFormatKey ) );
 
 		syncDateDefaultValueCanonical( control );
 	}
@@ -1812,6 +1885,8 @@
 		var originalOnClose;
 		var originalOnChangeMonthYear;
 
+		// jQuery UI only. GF 3.0 renders its own calendar and positions it
+		// without a shared #ui-datepicker-div, so this never runs there.
 		if ( ! input.length || ! $.fn.datepicker || ! input.data( 'datepicker' ) ) {
 			return;
 		}
@@ -1928,12 +2003,12 @@
 			return;
 		}
 
-		if ( $.datepicker && typeof $.datepicker.parseDate === 'function' ) {
-			try {
-				parsedDate = $.datepicker.parseDate( getDatepickerDisplayFormat( dateFormatKey ), rawValue );
-			} catch ( error ) {
-				parsedDate = null;
-			}
+		parsedDate = parseDateWithFormatKey( rawValue, dateFormatKey );
+
+		// A value already in canonical form is accepted as-is so that a
+		// yyyy-mm-dd default stored previously survives a round-trip.
+		if ( ! parsedDate ) {
+			parsedDate = parseCanonicalDateValue( rawValue );
 		}
 
 		if ( parsedDate ) {
@@ -4264,6 +4339,46 @@
 		return isRequired && ( ! fieldLabel.length || fieldLabel.hasClass( 'hidden_label' ) || fieldLabel.hasClass( 'screen-reader-text' ) || fieldLabel.hasClass( 'gform-screen-reader-text' ) || field.hasClass( 'hidden_label' ) );
 	}
 
+	/**
+	 * Locate the control that actually carries the field's submitted value.
+	 *
+	 * Gravity Forms names it input_{fieldId} and gives it the id
+	 * input_{formId}_{fieldId} for every field type. Matching on that is more
+	 * reliable than picking the first visible input, because GF 3.0's
+	 * international Phone field keeps its real value in a *hidden* input behind
+	 * a separate formatted control - a "first non-hidden input" lookup lands on
+	 * the wrong element and the submitted value is never updated.
+	 */
+	function getFieldValueInput( field, formId, fieldId, fallbackSelector ) {
+		var control = field.find( '#input_' + String( formId ) + '_' + String( fieldId ) ).filter( 'input, textarea, select' ).first();
+
+		if ( ! control.length ) {
+			control = field.find( '[name="input_' + String( fieldId ) + '"]' ).filter( 'input, textarea, select' ).first();
+		}
+
+		if ( control.length ) {
+			return control;
+		}
+
+		return fallbackSelector ? field.find( fallbackSelector ).first() : $();
+	}
+
+	/**
+	 * The visible companion of the value input, where the field renders one.
+	 *
+	 * GF 3.0's formatted Phone field suffixes it with "_visible"; every other
+	 * field type displays the value input itself.
+	 */
+	function getFieldDisplayInput( field, formId, fieldId, fallbackSelector ) {
+		var visible = field.find( '#input_' + String( formId ) + '_' + String( fieldId ) + '_visible' ).filter( 'input, textarea, select' ).first();
+
+		if ( visible.length ) {
+			return visible;
+		}
+
+		return getFieldValueInput( field, formId, fieldId, fallbackSelector );
+	}
+
 	function patchFieldDom( formId, fieldId, settingKey, value, oldValue, config ) {
 		var field = getFieldWrapper( formId, fieldId );
 		var fieldConfig = getItemConfig( config, 'field', String( fieldId ) ) || {};
@@ -4332,7 +4447,7 @@
 				break;
 
 			case 'placeholder':
-				input = field.find( 'input:not([type="hidden"]), textarea' ).first();
+				input = getFieldDisplayInput( field, formId, fieldId, 'input:not([type="hidden"]), textarea' );
 				if ( input.length ) {
 					input.attr( 'placeholder', value );
 				}
@@ -4354,13 +4469,22 @@
 					break;
 				}
 
-				input = field.find( 'input:not([type="hidden"]):not([type="radio"]):not([type="checkbox"]), textarea' ).first();
-				if ( input.length ) {
-					input.attr( 'value', value );
-					if ( ! input.val() || String( input.val() ) === String( oldValue || '' ) ) {
-						input.val( value );
+				// The value input and its visible companion are the same element
+				// for every field type except GF 3.0's formatted Phone, where
+				// both have to be written: the hidden one so the submitted value
+				// is correct, the visible one so the change is actually seen.
+				input = getFieldValueInput( field, formId, fieldId, 'input:not([type="hidden"]):not([type="radio"]):not([type="checkbox"]), textarea' );
+				input = input.add( getFieldDisplayInput( field, formId, fieldId, '' ) );
+
+				input.each( function() {
+					var target = $( this );
+
+					target.attr( 'value', value );
+
+					if ( ! target.val() || String( target.val() ) === String( oldValue || '' ) ) {
+						target.val( value );
 					}
-				}
+				} );
 				break;
 
 			case 'default_country':

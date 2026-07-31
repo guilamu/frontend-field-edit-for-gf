@@ -102,6 +102,14 @@ class FFE_Frontend_Controller {
 		return $payload;
 	}
 
+	/**
+	 * Enqueue the datepicker assets needed by the default value control.
+	 *
+	 * Gravity Forms 2.x only. Gravity Forms 3.0 removed both handles along with
+	 * jQuery UI and loads its own datepicker automatically for any form that
+	 * renders a datepicker field, so the wp_script_is()/wp_style_is() guards
+	 * below simply find nothing to enqueue there.
+	 */
 	private function maybe_enqueue_datepicker_assets( $form, $allowed_fields ) {
 		if ( ! $this->has_editable_date_default_field( $form, $allowed_fields ) ) {
 			return;

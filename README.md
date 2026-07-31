@@ -111,6 +111,12 @@ When you publish releases on GitHub, WordPress can detect new versions through t
 
 ## Changelog
 
+### 1.0.3 - 2026-07-31
+
+- **Fixed:** Gravity Forms 3.0 compatibility — Date field default values are converted between the field's display format and the stored canonical format without jQuery UI, which GF 3.0 removed. Previously the editor showed the raw `yyyy-mm-dd` value and saved back whatever was typed, unconverted.
+- **Fixed:** Gravity Forms 3.0 compatibility — the Placeholder and Default Value settings now target the input that actually carries the field's value, so they work with the new international Phone field, which keeps its value in a hidden input behind a formatted control.
+- **Improved:** The Date default value control is now picked up by both datepicker generations: GF 2.x initialises it directly, and GF 3.0 attaches its own accessible datepicker on first focus.
+
 ### 1.0.2 - 2026-05-09
 
 - **Improved:** Added the native Gravity Forms datepicker to Date field default value editing in the frontend panel.
